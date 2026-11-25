@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hyrox Coach</title>
+<style>
+:root{--bg:#f6f6f3;--card:#fff;--tx:#16161a;--mu:#6b6b73;--ac:#f5c400;--acx:#16161a;--ok:#1a9a4a;--ko:#d93a2f;--bd:#e3e3dd;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101012;--card:#1b1b1f;--tx:#f2f2f0;--mu:#9a9aa3;--bd:#2b2b31;--ok:#4cd07d;--ko:#ff6b60}}
+:root[data-theme="dark"]{--bg:#101012;--card:#1b1b1f;--tx:#f2f2f0;--mu:#9a9aa3;--bd:#2b2b31;--ok:#4cd07d;--ko:#ff6b60}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{--run:#4a8fe7;max-width:560px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 12px;letter-spacing:.5px}
+h1 span{background:var(--ac);color:var(--acx);padding:0 8px;border-radius:6px}
+nav{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
+nav button{flex:1 0 auto;white-space:nowrap;padding:10px 12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-weight:600;font-size:13px}
+nav button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mu{color:var(--mu);font-size:13px}
+.big{font-size:54px;font-weight:800;font-variant-numeric:tabular-nums;text-align:center;margin:6px 0}
+.cur{text-align:center;font-size:18px;font-weight:700}
+.btn{width:100%;padding:18px;border:0;border-radius:14px;background:var(--ac);color:var(--acx);font-size:19px;font-weight:800;margin-top:10px}
+.btn.s{background:var(--card);color:var(--tx);border:1px solid var(--bd);font-size:15px;padding:12px;font-weight:600}
+select,input{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);width:100%}
+label{display:block;margin:8px 0 4px;font-weight:600;font-size:14px}
+.seg{padding:8px 0;border-bottom:1px solid var(--bd)}
+.seg:last-child{border:0}
+.seg.now{background:color-mix(in srgb,var(--ac) 22%,transparent);margin:0 -14px;padding:8px 14px}
+.t{font-variant-numeric:tabular-nums;font-weight:700}
+.ok{color:var(--ok)}.ko{color:var(--ko)}
+.hide{display:none}
+.btn.s.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.ti{width:90px;text-align:center}
+.hero h2{margin:4px 0 8px;font-size:30px;line-height:1.1}
+.stk{display:flex;height:34px;border-radius:8px;overflow:hidden;margin-top:8px}
+.stk>div{border-left:1px solid var(--card);min-width:2px}
+.gb{position:relative;height:10px;background:var(--bd);border-radius:5px;margin:4px 0 12px}
+.gb i{display:block;height:100%;border-radius:5px}
+.gb u{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--tx);text-decoration:none}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+summary{cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+.top{display:flex;justify-content:space-between;align-items:center}
+.me{width:44px;height:44px;border-radius:50%;border:2px solid var(--ac);background:var(--card);font-size:24px;padding:0;line-height:1;overflow:hidden}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px))}
+.ov.hide{display:none}
+.md{width:100%;max-width:420px;margin-top:20px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cd{min-height:62px;border:1px solid var(--bd);border-radius:6px;padding:3px;font-size:12px;cursor:pointer;overflow:hidden}
+.cd.out{border-color:transparent;cursor:default}
+.cd.today{outline:2px solid var(--ac)}
+.cd.sel{background:color-mix(in srgb,var(--ac) 25%,var(--card))}
+.bar{height:6px;border-radius:2px;margin-top:3px}
+.more{font-size:10px;color:var(--run);text-align:right;margin-top:2px}
+main{padding-bottom:96px}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bnav button{flex:1;border:0;border-top:3px solid transparent;background:none;color:var(--mu);padding:8px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit;font-size:20px;line-height:1.2}
+.bnav button small{font-size:11px;font-weight:600}
+.bnav button.on{color:var(--tx);border-top-color:var(--ac)}
+.dial{display:block;width:230px;max-width:75%;margin:6px auto}
+.dial.hide{display:none}
+.rpe{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+.rpe button{padding:10px 0;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-weight:700;font-size:15px}
+.rpe button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.sw button{width:38px;height:38px;border-radius:50%;border:3px solid transparent;padding:0}
+.sw button.on{border-color:var(--tx)}
+#tour{position:fixed;inset:0;z-index:80}
+#tour.hide{display:none}
+#tspot{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.65);border:2px solid var(--ac);pointer-events:none}
+#ttip{position:absolute;background:var(--card);color:var(--tx);border:2px solid var(--ac);border-radius:14px;padding:14px}
+#ttip p{margin:6px 0 12px}
+#tarr{position:absolute;width:16px;height:16px;background:var(--card);border:2px solid var(--ac);transform:rotate(45deg)}
+#tarr.up{top:-10px;border-right:0;border-bottom:0}
+#tarr.dn{bottom:-10px;border-left:0;border-top:0}
+.pgb{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin:6px 0 10px}
+.pgb i{display:block;height:100%;background:var(--ac);transition:width .2s}
+.av{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.av button{flex:1;font-size:30px;padding:8px 0;border-radius:14px;border:2px solid var(--bd);background:var(--card)}
+.av button.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 25%,var(--card))}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f5c400">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hyrox Coach">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+<main>
+<div class="top"><h1><span>HYROX</span> Coach</h1><button class="me" id="me" onclick="openP(false)" aria-label="Profil">👤</button></div>
+<div class="mu" id="hi" style="margin:0 0 10px"></div>
+<nav id="snav" class="hide"></nav>
+<nav id="snav2" class="hide"></nav>
+
+<section id="p1" class="hide">
+<div id="alrt" class="card hide"></div>
+<div class="card">
+<div class="row" style="gap:6px"><select id="clk" style="flex:0 0 40%;min-width:0" onchange="sClk(this.value)" aria-label="Affichage du chrono"><option value="num">⏱ Numérique</option><option value="ana">🕒 Analogique</option></select>
+<select id="cat" style="flex:1;min-width:0" onchange="refresh();relayR()"><optgroup label="Open"><option value="hs">Open Homme · Simple</option><option value="hd">Open Homme · Double</option><option value="fs">Open Femme · Simple</option><option value="fd">Open Femme · Double</option><option value="md">Open Mixte · Double</option></optgroup><optgroup label="Pro"><option value="phs">Pro Homme · Simple</option><option value="pfs">Pro Femme · Simple</option><option value="phd">Pro Homme · Double</option><option value="pfd">Pro Femme · Double</option></optgroup><optgroup label="Relais"><option value="rh">Relais Homme</option><option value="rf">Relais Femme</option><option value="rm">Relais Mixte</option></optgroup></select></div>
+<div class="big" id="clock">0:00</div>
+<svg id="aclock" class="dial hide" viewBox="0 0 200 200"></svg>
+<div class="cur" id="curname">Prêt ?</div>
+<div class="mu" style="text-align:center" id="curinfo">16 segments : 8 × (1 km de course + 1 station)</div>
+<div id="live" class="hide" style="text-align:center;margin:6px 0"></div>
+<button class="btn" id="go" onclick="next()">Démarrer</button>
+<button class="btn s" id="rmo" onclick="rmOpen()">⛶ Mode course plein écran</button>
+<button class="btn s" id="undo" onclick="undo()">Annuler le dernier split</button>
+<button class="btn s" id="rst" onclick="rst()">Remise à zéro de l’épreuve</button>
+<div id="rpeR" class="hide"></div>
+<div id="recR" class="hide"></div>
+</div>
+<div class="card hide" id="relay"></div>
+<div class="card" id="list"></div>
+</section>
+
+<section id="p2" class="hide">
+<div class="card">
+<div class="row" style="gap:6px"><button class="btn s on" id="m0" style="margin:0" onclick="mode('auto')">Auto</button><button class="btn s" id="m1" style="margin:0" onclick="mode('man')">Manuel</button></div>
+<div id="auto">
+<label for="tg">Temps objectif (minutes)</label>
+<input id="tg" type="number" min="40" max="150" value="80" oninput="plan();repR()">
+<label for="pc" id="pcl">Allure course à pied (min/km)</label>
+<input id="pc" type="text" value="4:30" placeholder="m:ss" oninput="pcIn()">
+<p class="mu" id="amsg"></p>
+</div>
+<div id="manu" class="hide"><p class="mu">Saisis le temps de chaque segment au format m:ss. Les champs sont préremplis avec le calcul du mode Auto.</p></div>
+</div>
+<div class="card" id="plan"></div>
+<div class="card" id="rep"></div>
+</section>
+
+<section id="p7" class="hide">
+<div class="card"><b>Calendrier</b>
+<div class="row" style="margin-top:10px"><button class="btn s" style="width:44px;margin:0;padding:8px" onclick="cmv(-1)" aria-label="Mois précédent">‹</button><b id="cmt"></b><button class="btn s" style="width:44px;margin:0;padding:8px" onclick="cmv(1)" aria-label="Mois suivant">›</button></div>
+<div class="cal" id="cal" style="margin-top:8px"></div>
+<div class="row mu" style="margin-top:8px;flex-wrap:wrap;justify-content:flex-start;gap:10px"><span><i class="dot" style="background:var(--ok)"></i>Évènement</span><span><i class="dot" style="background:var(--ko)"></i>Épreuve</span><span><i class="dot" style="background:#f59e0b"></i>Séance faite</span><span><i class="dot" style="background:var(--run)"></i>Prévue</span></div>
+<div id="cdet"></div></div>
+</section>
+
+<section id="p3" class="hide">
+<div class="card" id="gavg"></div>
+<div class="card"><label for="gsrc" style="margin-top:0">Données affichées</label><select id="gsrc" onchange="graph()"><option value="last">Course en cours / dernière</option></select>
+<button class="btn s hide" id="gdel" onclick="gdl()">Supprimer ce résultat</button>
+</div>
+<div class="card" id="gbody"></div>
+</section>
+
+<section id="p9" class="hide"><div class="card" id="recp"></div></section>
+
+<section id="p10" class="hide"><div id="ldp"></div></section>
+
+<section id="p8" class="hide"><div id="set"></div></section>
+
+<section id="p6" class="hide">
+<div class="card"><label for="eq" style="margin-top:0">Rechercher un évènement</label><input id="eq" type="search" placeholder="Hyrox, Paris, Lyon…" oninput="evS()">
+<div id="er"></div>
+<p class="mu">Dates indicatives de la saison HYROX 2026/27 : vérifie-les sur le site officiel.</p>
+<details style="margin-top:8px"><summary class="mu">Ajouter un évènement perso ▾</summary>
+<label for="en">Nom</label><input id="en" type="text" maxlength="40">
+<label for="ed">Date</label><input id="ed" type="date">
+<p class="ko" id="eerr" style="margin:6px 0 0;font-size:14px"></p>
+<button class="btn" onclick="evAddC()">Ajouter</button></details></div>
+<div id="el"></div>
+</section>
+
+<section id="p5" class="hide">
+<div class="row" style="margin-bottom:10px"><h2 style="margin:0;font-size:20px">Entraînements</h2><select id="clk2" style="flex:1;min-width:0;margin:0 8px" onchange="sClk(this.value)" aria-label="Affichage du chrono"><option value="num">⏱ Numérique</option><option value="ana">🕒 Analogique</option></select><button class="me" style="font-size:28px;font-weight:700" onclick="openW()" aria-label="Créer un entraînement">+</button></div>
+<div id="wl"></div>
+</section>
+
+<section id="p4" class="hide">
+<div class="card" id="hist"></div>
+<div id="hists"></div>
+<button class="btn s" id="clh" onclick="clh()">Effacer l’historique</button>
+</section>
+</main>
+
+<div id="rm" class="ov hide" style="padding:0;align-items:stretch;background:var(--bg)"><div style="width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:8px;padding:max(14px,env(safe-area-inset-top,0px)) 14px max(14px,env(safe-area-inset-bottom,0px));min-height:100%">
+<div class="row"><b>Mode course</b><button class="btn s" style="width:auto;margin:0" onclick="rmClose()">Fermer ✕</button></div>
+<div id="rmc" class="big" style="font-size:clamp(64px,22vw,130px);margin:8px 0 0">0:00</div>
+<div id="rms" class="cur" style="font-size:28px">Prêt ?</div>
+<div id="rmd" class="mu" style="text-align:center;font-size:17px"></div>
+<div id="rml" style="text-align:center;font-size:18px"></div>
+<button class="btn" id="rmb" style="flex:1;min-height:30vh;font-size:30px;margin-top:10px" onclick="rmNext()">Démarrer</button>
+<button class="btn s" onclick="rmUndo()">Annuler le dernier split</button>
+</div></div>
+
+<div id="wz" class="ov hide"><div class="card md">
+<div class="mu" id="wzc"></div>
+<div class="pgb"><i id="wzi" style="width:0"></i></div>
+<h2 id="wzt" style="margin:4px 0 8px"></h2>
+<div id="wzb"></div>
+<p class="ko" id="wze" style="margin:8px 0 0;font-size:14px"></p>
+<div class="row" style="gap:8px;margin-top:14px"><button class="btn s" id="wzp" style="margin:0" onclick="wzBack()">Retour</button><button class="btn" id="wzn" style="margin:0" onclick="wzNext()">Suivant</button></div>
+</div></div>
+
+<div id="tour" class="hide"><div id="tspot"></div><div id="ttip"><div id="tarr"></div><b id="tt"></b><p id="tp"></p><div class="row" style="gap:8px"><button class="btn s" id="tskip" style="margin:0" onclick="tourEnd()">Passer</button><button class="btn" id="tnx" style="margin:0" onclick="tourNext()">Suivant</button></div><div class="mu" id="tcnt" style="text-align:center;margin-top:8px"></div></div></div>
+
+<div class="bnav" id="bnav">
+<button id="b0" onclick="goM(0)"><span>🏋️</span><small id="bl0">Hyrox</small></button>
+<button id="b1" onclick="goM(1)"><span>📅</span><small id="bl1">Évènement</small></button>
+<button id="b2" onclick="goM(2)"><span>👤</span><small id="bl2">Profil</small></button>
+<button id="b3" onclick="goM(3)"><span>⚙️</span><small id="bl3">Paramètres</small></button>
+</div>
+
+<div id="pe" class="ov hide"><div class="card md">
+<h2 style="margin:0 0 4px">Modifier la séance</h2>
+<label for="pen">Nom</label><input id="pen" type="text" maxlength="40">
+<label for="ped">Date</label><input id="ped" type="date">
+<label for="per">Nombre de tours</label><input id="per" type="number" min="1" max="10" inputmode="numeric" onchange="ewSet()">
+<label for="peu">Course avant chaque station</label><select id="peu" onchange="ewSet()"></select>
+<label for="pev">Volume</label><select id="pev" onchange="ewSet()"></select>
+<label>Stations</label><div id="pes"></div><div id="pel"></div>
+<p class="ko" id="peerr" style="margin:8px 0 0;font-size:14px"></p>
+<button class="btn" onclick="ewSave()">Enregistrer</button>
+<button class="btn s" onclick="ewClose()">Annuler</button>
+</div></div>
+
+<div id="ses" class="ov hide"><div class="card md">
+<div class="mu" id="sn" style="text-align:center"></div>
+<div class="big" id="sclk">0:00</div>
+<svg id="asclk" class="dial hide" viewBox="0 0 200 200"></svg>
+<div class="cur" id="sst"></div>
+<div class="mu" style="text-align:center;font-size:16px" id="sdt"></div>
+<div class="mu" style="text-align:center" id="spr"></div>
+<button class="btn" id="snx" onclick="sNext()">Démarrer</button>
+<button class="btn s" onclick="sUndo()">Annuler le dernier split</button>
+<button class="btn s" id="sq" onclick="sQuit()">Quitter la séance</button>
+<div id="rpeS" class="hide"></div>
+<div id="ssum" style="margin-top:10px"></div>
+</div></div>
+
+<div id="wm" class="ov hide"><div class="card md">
+<h2 style="margin:0 0 4px">Nouvel entraînement</h2>
+<label for="wn">Nom</label><input id="wn" type="text" maxlength="30" placeholder="Mon entraînement">
+<label>Stations à inclure</label><div id="wst"></div>
+<label for="wr">Nombre de tours</label><input id="wr" type="number" min="1" max="10" value="1" inputmode="numeric">
+<label for="wrun">Course avant chaque station</label><select id="wrun"><option value="0">Aucune</option><option value="100">100 m</option><option value="200">200 m</option><option value="300">300 m</option><option value="400">400 m</option><option value="500">500 m</option><option value="600">600 m</option><option value="700">700 m</option><option value="800">800 m</option><option value="900">900 m</option><option value="1000">1 km</option><option value="1500">1500 m</option><option value="2000">2 km</option></select>
+<label for="wf">Volume par rapport à la course</label><select id="wf"><option value="0.25">25 %</option><option value="0.5">50 %</option><option value="0.75">75 %</option><option value="1" selected>100 %</option></select>
+<p class="mu" style="margin:6px 0 0">Volume = part des distances et des répétitions de la course officielle. À 50 % : 500 m de SkiErg au lieu de 1000 m, 50 wall balls au lieu de 100.</p>
+<p class="ko" id="werr" style="margin:8px 0 0;font-size:14px"></p>
+<button class="btn" onclick="saveW()">Enregistrer</button>
+<button class="btn s" onclick="closeW()">Annuler</button>
+</div></div>
+
+<div id="prof" class="ov hide"><div class="card md">
+<h2 id="ptitle" style="margin:0 0 4px">Crée ton profil</h2>
+<p class="mu" style="margin:0 0 6px">Ces infos restent sur ton appareil. Tu pourras les modifier à tout moment en touchant ton avatar en haut à droite.</p>
+<label>Avatar</label><div class="av" id="avs"></div>
+<button class="btn s" style="margin-top:8px" onclick="document.getElementById('pf').click()">Importer une photo</button><input type="file" id="pf" accept="image/*" class="hide" onchange="loadPh(this)">
+<label for="pn">Prénom</label><input id="pn" type="text" maxlength="20">
+<label for="pln">Nom</label><input id="pln" type="text" maxlength="24">
+<div class="row" style="gap:8px;align-items:flex-start">
+<div style="flex:1"><label for="ph">Taille</label><select id="ph"></select></div>
+<div style="flex:1"><label for="pw">Poids</label><select id="pw"></select></div>
+<div style="flex:1"><label for="pa">Âge</label><select id="pa"></select></div>
+</div>
+<label for="pg">Genre</label><select id="pg"><option value="h">Homme</option><option value="f">Femme</option></select>
+<p class="ko" id="perr" style="margin:8px 0 0;font-size:14px"></p>
+<button class="btn" onclick="saveP()">Enregistrer</button>
+<button class="btn s hide" id="pcx" onclick="closeP()">Annuler</button>
+</div></div>
+
+<script>
+var ST=[
+["SkiErg","1000 m",0.07,["1000 m","1000 m"]],
+["Sled Push","50 m",0.04,["152 kg","102 kg"]],
+["Sled Pull","50 m",0.06,["103 kg","78 kg"]],
+["Burpee Broad Jumps","80 m",0.08,["80 m","80 m"]],
+["RowErg","1000 m",0.08,["1000 m","1000 m"]],
+["Farmers Carry","200 m",0.04,["2 × 24 kg","2 × 16 kg"]],
+["Sandbag Lunges","100 m",0.08,["20 kg","10 kg"]],
+["Wall Balls","100 reps",0.10,["6 kg","4 kg"]]];
+var RUNP=0.45/8;
+var SEG=[];
+ST.forEach(function(s,i){
+SEG.push({n:"Course "+(i+1)+" · 1 km",d:"",p:RUNP});
+SEG.push({n:s[0],d:s[1],p:s[2],w:s[3]});
+});
+var run=false,t0=0,cum=[],tick=null,H=[];
+function $(i){return document.getElementById(i)}
+function fmt(ms){var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),r=s%60;
+return (h?h+":"+String(m).padStart(2,"0"):m)+":"+String(r).padStart(2,"0")}
+function fs(s){return fmt(s*1000)}
+var CATN={h:"Open Homme",f:"Open Femme",hs:"Open Homme · Simple",hd:"Open Homme · Double",fs:"Open Femme · Simple",fd:"Open Femme · Double"};
+function ci(){return CATI[$("cat").value]}
+function dbl(){return !!CATD[$("cat").value]}
+function wd(s){return s.w?cv(s.d+" · "+s.w[ci()])+(dbl()?" · à deux":(CATR[$("cat").value]?" · relais":"")):""}
+
+var M=0,SB=[0,0,0,0],AS=0;
+var PM={1:[0,0],5:[0,1],6:[1,0],7:[1,1],2:[2,0],3:[2,1,0],4:[2,1,1],9:[2,1,2],10:[2,1,3],8:[3,0]};
+function tab(i){var a=PM[i]||[0,0];M=a[0];SB[M]=a[1];if(a.length>2)AS=a[2];rnd()}
+function goM(m){M=m;rnd()}
+function setS(s){SB[M]=s;rnd()}
+function setA(a){AS=a;rnd()}
+function pageNow(){var s=SB[M];if(M==0)return s?5:1;if(M==1)return s?7:6;if(M==2)return s?[3,4,9,10][AS]:2;return 8}
+function rnd(){var p=pageNow(),i,h="",h2="",bl=["hyrox","event","profile","settings"];
+for(i=0;i<=10;i++){var e=$("p"+i);if(e)e.classList.toggle("hide",i!=p)}
+for(i=0;i<4;i++){$("b"+i).classList.toggle("on",i==M);$("bl"+i).textContent=T(bl[i])}
+var subs=M==0?[T("race"),T("training")]:(M==1?[T("addev"),T("calendar")]:(M==2?[T("target"),T("analysis")]:[]));
+subs.forEach(function(x,j){h+='<button class="'+(SB[M]==j?"on":"")+'" onclick="setS('+j+')">'+x+'</button>'});
+$("snav").innerHTML=h;$("snav").classList.toggle("hide",!subs.length);
+var a2=M==2&&SB[2]==1;if(a2)[T("chart"),T("history"),T("records"),T("load")].forEach(function(x,j){h2+='<button class="'+(AS==j?"on":"")+'" onclick="setA('+j+')">'+x+'</button>'});
+$("snav2").innerHTML=h2;$("snav2").classList.toggle("hide",!a2);
+window.scrollTo(0,0);
+if(p==1)refresh();if(p==2)plan();if(p==3)graph();if(p==4){hist();histS()}if(p==5)trn();if(p==6)evt();if(p==7)calRender();if(p==8)setR();if(p==9)recPage();if(p==10)loadPage();if(p==1){loadAlert();relayR()}if(p==2)repR()}
+var MODE="auto",MAN=[];
+function ps(v){v=String(v).trim().replace(",",".");if(v.indexOf(":")>-1){var a=v.split(":");return (parseInt(a[0])||0)*60+(parseInt(a[1])||0)}return (parseFloat(v)||0)*60}
+function autoT(){var t=(parseFloat($("tg").value)||0)*60,p=PCK;if(!t)return null;
+var rem=t-(p>0?p*8:t*0.45);if(rem<=0)return null;
+return SEG.map(function(s){return s.w?rem*s.p/0.55:(p>0?p:t*RUNP)})}
+function manT(){var s=0;MAN.forEach(function(v){s+=v||0});if(!s)return null;return SEG.map(function(x,i){return MAN[i]||0})}
+function targets(){return MODE=="man"?manT():autoT()}
+function mode(x){if(x=="man"&&!MAN.some(Boolean)){var T=autoT();if(T)MAN=T.map(Math.round)}MODE=x;plan();refresh()}
+function setM(i,v){MAN[i]=ps(v);mtot();refresh()}
+function mtot(){var s=0,r=0;MAN.forEach(function(v,i){s+=v||0;if(i%2==0)r+=v||0});if($("mtot"))$("mtot").textContent=fs(s)+" · course "+pdisp(r/8)}
+function refresh(){
+var done=cum.length,TT=targets(),h="";
+SEG.forEach(function(s,i){
+var seg=i<done?cum[i]-(i?cum[i-1]:0):null,cl=(i==done&&run)?" now":"";
+var det=wd(s)+(CATR[$("cat").value]?" · 👤 "+esc(an(i)):"");
+var delta="";
+if(seg!==null&&TT&&TT[i]){var d=seg/1000-TT[i];delta='<div class="mu '+(d<=0?"ok":"ko")+'">'+(d<=0?"−":"+")+fs(Math.abs(d))+'</div>'}
+h+='<div class="seg row'+cl+'"><div><b>'+s.n+'</b><div class="mu">'+det+'</div></div><div style="text-align:right"><div class="t">'+(seg!==null?fmt(seg):"–")+'</div>'+delta+'</div></div>'});
+$("list").innerHTML=h;
+if(run&&done<16){var s=SEG[done];$("curname").textContent=s.n;$("curinfo").textContent=segLine(done)}liveUpd(run?Date.now()-t0:(cum.length?cum[cum.length-1]:0));rmUpd()
+}
+var rstT=null;
+function rstBack(){clearTimeout(rstT);rstT=null;var b=$("rst");b.textContent="Remise à zéro de l’épreuve";b.style.color=""}
+function rst(){var b=$("rst");if(!rstT){b.textContent="Confirmer la remise à zéro ?";b.style.color="var(--ko)";rstT=setTimeout(rstBack,3000);return}rstBack();resetAll()}
+function resetAll(){$("rpeR").classList.add("hide");$("recR").classList.add("hide");wkOff();clearInterval(tick);run=false;cum=[];$("clock").textContent="0:00";$("curname").textContent="Prêt ?";$("curinfo").textContent="16 segments : 8 × (1 km de course + 1 station)";$("go").textContent="Démarrer";$("go").onclick=next;$("cat").disabled=false;refresh()}
+function loop(){var e=Date.now()-t0;$("clock").textContent=fmt(e);liveUpd(e);rmUpd(e)}
+function next(){
+vib();if(!run){run=true;wkOn();$("rpeR").classList.add("hide");$("recR").classList.add("hide");cum=[];t0=Date.now();tick=setInterval(loop,200);$("go").textContent="Segment terminé";$("cat").disabled=true;refresh();return}
+cum.push(Date.now()-t0);
+if(cum.length==16){finish();return}
+refresh()}
+function undo(){if(run&&cum.length){cum.pop();refresh()}}
+function finish(){
+wkOff();clearInterval(tick);var tot=cum[15];$("clock").textContent=fmt(tot);
+run=false;$("go").textContent="Nouvelle course";$("cat").disabled=false;
+$("curname").textContent="Terminé !";$("curinfo").textContent="Temps final : "+fmt(tot);
+H.unshift({d:new Date().toLocaleDateString("fr-FR"),tot:tot,cat:$("cat").value,sp:cum.slice(),team:CATR[$("cat").value]?JSON.parse(JSON.stringify(RLY)):null});
+try{localStorage.setItem("hyroxH",JSON.stringify(H))}catch(e){}
+var keep=cum;refresh();cum=keep;showRpe("r");showRec();rmUpd();
+$("go").onclick=function(){$("rpeR").classList.add("hide");$("recR").classList.add("hide");cum=[];$("go").onclick=next;$("clock").textContent="0:00";$("curname").textContent="Prêt ?";$("go").textContent="Démarrer";refresh()}}
+function plan(){
+var m=MODE=="man",h="",c=0;
+$("auto").classList.toggle("hide",m);$("manu").classList.toggle("hide",!m);
+$("m0").classList.toggle("on",!m);$("m1").classList.toggle("on",m);
+if(!m){
+var T=autoT(),t=(parseFloat($("tg").value)||0)*60,p=PCK;
+if(!T){$("amsg").textContent=t?"Le temps de course à pied dépasse ton objectif : augmente le temps ou ralentis l’allure.":"Renseigne un temps objectif.";$("plan").innerHTML="";refresh();return}
+var rp=p>0?p:t*RUNP;
+$("amsg").textContent="Course à pied : "+fs(rp*8)+" au total · ateliers : "+fs(t-rp*8);
+SEG.forEach(function(s,i){c+=T[i];
+h+='<div class="seg row"><div><b>'+s.n+'</b><div class="mu">'+wd(s)+'</div></div><div style="text-align:right"><div class="t">'+fs(T[i])+'</div><div class="mu">cumul '+fs(c)+'</div></div></div>'});
+$("plan").innerHTML=h;refresh();return}
+SEG.forEach(function(s,i){
+h+='<div class="seg row"><div><b>'+s.n+'</b><div class="mu">'+wd(s)+'</div></div><input class="ti" type="text" placeholder="m:ss" value="'+(MAN[i]?fs(MAN[i]):"")+'" oninput="setM('+i+',this.value)"></div>'});
+h+='<div class="row" style="padding-top:10px"><b>Total</b><span class="t" id="mtot"></span></div>';
+$("plan").innerHTML=h;mtot();refresh()}
+function srcData(){var v=$("gsrc").value;
+if(v=="tgt"){var T=targets();return T?{d:T}:null}
+var sp=v=="last"?(cum.length?cum:(H[0]?H[0].sp:null)):(H[+v]?H[+v].sp:null);
+if(!sp)return null;
+return {d:sp.map(function(x,i){return (x-(i?sp[i-1]:0))/1000})}}
+function graph(){avgChart();calRender();
+var sel=$("gsrc"),cu=sel.value||"last",o='<option value="last">Course en cours / dernière</option><option value="tgt">Objectif</option>';
+H.forEach(function(r,i){o+='<option value="'+i+'">'+r.d+' · '+fmt(r.tot)+'</option>'});
+sel.innerHTML=o;sel.value=cu;if(sel.value!=cu)sel.value="last";$("gdel").classList.toggle("hide",!/^\d+$/.test(sel.value));
+var S=srcData(),el=$("gbody");
+if(!S){el.innerHTML='<p class="mu">Aucune donnée : lance une course ou renseigne un objectif.</p>';return}
+var d=S.d,tot=0,run=0,mx=0,T=sel.value=="tgt"?null:targets(),h="",bar="";
+d.forEach(function(v,i){tot+=v;if(i%2==0)run+=v;if(v>mx)mx=v;if(T&&T[i]>mx)mx=T[i]});
+tot=tot||1;mx=mx||1;
+d.forEach(function(v,i){bar+='<div title="'+SEG[i].n+' · '+fs(v)+'" style="flex:'+v+';background:'+(i%2?"var(--ac)":"var(--run)")+'"></div>'});
+h+='<div class="row"><b>Durée totale</b><span class="t">'+fs(tot)+'</span></div><div class="stk">'+bar+'</div>';
+h+='<div class="row mu" style="margin:6px 0 14px"><span><i class="dot" style="background:var(--run)"></i>Course à pied '+Math.round(run/tot*100)+' %</span><span><i class="dot" style="background:var(--ac)"></i>Ateliers '+Math.round((tot-run)/tot*100)+' %</span></div>';
+d.forEach(function(v,i){var dl="";
+if(T&&T[i]){var x=v-T[i];dl=' <span class="'+(x<=0?"ok":"ko")+'">'+(x<=0?"−":"+")+fs(Math.abs(x))+'</span>'}
+h+='<div class="row"><span>'+SEG[i].n+'</span><span class="t">'+fs(v)+' · '+Math.round(v/tot*100)+' %'+dl+'</span></div><div class="gb"><i style="width:'+(v/mx*100)+'%;background:'+(i%2?"var(--ac)":"var(--run)")+'"></i>'+(T&&T[i]?'<u style="left:'+(T[i]/mx*100)+'%"></u>':"")+'</div>'});
+if(T)h+='<p class="mu">Le trait noir marque ton temps objectif pour chaque segment.</p>';
+el.innerHTML=h}
+function hist(){
+if(!H.length){$("hist").innerHTML='<p class="mu">Aucune course enregistrée pour l’instant.</p>';return}
+$("hist").innerHTML=H.map(function(r){
+var runs=0;r.sp.forEach(function(v,i){if(i%2==0)runs+=v-(i?r.sp[i-1]:0)});
+var det="";r.sp.forEach(function(v,i){var s=v-(i?r.sp[i-1]:0);det+='<div class="row" style="padding:7px 0;border-top:1px solid var(--bd)"><div><b>'+SEG[i].n+'</b><div class="mu">'+wd0(SEG[i],r.cat)+(r.team?" · 👤 "+esc(r.team.names[r.team.asg[i]]||""):"")+'</div></div><div style="text-align:right"><div class="t">'+fmt(s)+'</div><div class="mu">cumul '+fmt(v)+' · '+Math.round(s/r.tot*100)+' %</div></div></div>'});
+return '<details class="seg"><summary class="row"><div><b>'+r.d+'</b><div class="mu">'+(CATN[r.cat]||"")+' · course à pied '+fmt(runs)+' · ateliers '+fmt(r.tot-runs)+'</div>'+(r.rpe?'<div class="mu">Effort perçu : '+r.rpe+'/10 · '+RPEL[r.rpe]+'</div>':"")+(r.team?teamH(r):"")+'<div class="mu">Toucher pour voir le détail ▾</div></div><div class="t" style="font-size:20px">'+fmt(r.tot)+'</div></summary><div style="margin-top:8px">'+det+'</div></details>'}).join("")}
+function wd0(s,c){if(!s.w)return "";var g=CATI[c];if(g==null)g=0;return cv(s.d+" · "+s.w[g])+(CATD[c]?" · à deux":(CATR[c]?" · relais":""))}
+var SUG=[
+{n:"Initiation · 4 stations",d:"Pour découvrir le format : 4 stations à demi-volume, avec 500 m de course entre chaque.",r:1,run:500,f:.5,st:[0,1,4,7]},
+{n:"Demi-Hyrox",d:"Les 8 stations à demi-volume, avec 1 km de course avant chacune. Un bon test avant une compétition.",r:1,run:1000,f:.5,st:[0,1,2,3,4,5,6,7]},
+{n:"Force & traineaux",d:"Travail de poussée, de traction et de portés. Repos de 1 à 2 min entre les tours.",r:3,run:0,f:.75,st:[1,2,5,6]},
+{n:"Machines & cardio",d:"Enchaînements SkiErg et rameur avec une course courte.",r:4,run:400,f:.5,st:[0,4]},
+{n:"Endurance des jambes",d:"Burpees, fentes et wall balls pour travailler le muscle et le souffle.",r:3,run:400,f:.75,st:[3,6,7]},
+{n:"Simulation Hyrox complète",d:"Le format officiel : 8 × (1 km + station). Vise ton allure d’objectif.",r:1,run:1000,f:1,st:[0,1,2,3,4,5,6,7]}];
+var WS=[];try{WS=JSON.parse(localStorage.getItem("hyroxW")||"[]")}catch(e){WS=[]}
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function sc(d,f){var m=/^(\d+)\s*(.*)$/.exec(d);if(!m)return d;return Math.max(5,Math.round(+m[1]*f/5)*5)+" "+m[2]}
+var RO=[0,100,200,300,400,500,600,700,800,900,1000,1500,2000],VO=[.25,.5,.75,1];
+var SL=[];try{SL=JSON.parse(localStorage.getItem("hyroxS")||"[]")}catch(e){SL=[]}
+function ALLW(){return SUG.concat(WS)}
+function ropt(v){return RO.map(function(x){return '<option value="'+x+'"'+(x==v?" selected":"")+'>'+(x?dlabel(x):"Aucune")+'</option>'}).join("")}
+function vopt(v){return VO.map(function(x){return '<option value="'+x+'"'+(x==v?" selected":"")+'>'+Math.round(x*100)+' %</option>'}).join("")}
+function sumH(w){return w.r+' tour'+(w.r>1?"s":"")+' · '+w.st.length+' station'+(w.st.length>1?"s":"")+(w.run?" · course "+cv(w.run+" m"):"")+' · volume '+Math.round(w.f*100)+' %'}
+function ld(x){var m=/^(.*?)(\d+)\s*kg$/.exec(x);return m?{pre:m[1],n:+m[2]}:null}
+function qOf(w,si){var o=w.ov&&w.ov[si];if(o&&o.q!=null)return o.q;return Math.max(5,Math.round(parseInt(ST[si][1])*w.f/5)*5)}
+function kgOf(w,si){var o=w.ov&&w.ov[si];if(o&&o.kg!=null)return o.kg;var l=ld(ST[si][3][ci()]);return l?l.n:0}
+function un(si){return ST[si][1].replace(/^\d+\s*/,"")}
+function stepDet(w,si){var l=ld(ST[si][3][ci()]);return qOf(w,si)+" "+un(si)+(l?" · "+l.pre+kgOf(w,si)+" kg":"")}
+function wq(k,si,t,v){var w=k<0?EW:ALLW()[k],x=parseFloat(String(v).replace(",","."));w.ov=w.ov||{};var o=w.ov[si]=w.ov[si]||{};
+if(t==0)o.q=x>0?(un(si)=="m"?toM(x):x):null;else o.kg=x>0?toKg(x):null;
+if(k>=SUG.length){try{localStorage.setItem("hyroxW",JSON.stringify(WS))}catch(e){}}}
+function stH(w,k){var o="",bd='<div class="row" style="padding:6px 0;border-top:1px solid var(--bd)">';
+w.st.forEach(function(si){var s=ST[si],l=ld(s[3][ci()]);
+if(w.run)o+=bd+'<span>Course</span><span class="t">'+cv(w.run+' m')+'</span></div>';
+o+=bd+'<b>'+s[0]+'</b><span style="display:flex;gap:6px;align-items:center"><input class="ti" style="width:72px" type="number" inputmode="decimal" value="'+qd(w,si)+'" oninput="wq('+k+','+si+',0,this.value)"><span class="mu">'+ul(si)+'</span>'+(l?'<span class="mu">'+l.pre+'</span><input class="ti" style="width:60px" type="number" inputmode="decimal" value="'+kd(w,si)+'" oninput="wq('+k+','+si+',1,this.value)"><span class="mu">'+CFG.mu+'</span>':'')+'</span></div>'});return o}
+function wset(k){var w=ALLW()[k];w.run=+$("wr"+k).value;var nf=+$("wv"+k).value;if(nf!=w.f)w.ov={};w.f=nf;$("wst"+k).innerHTML=stH(w,k);$("wsm"+k).textContent=sumH(w);
+if(k>=SUG.length){try{localStorage.setItem("hyroxW",JSON.stringify(WS))}catch(e){}}}
+function wCard(w,k){var di=k-SUG.length,del=di>=0?'<button class="btn s" id="dw'+di+'" onclick="dw('+di+')">Supprimer</button>':"";
+return '<details class="card"><summary class="row"><div><b>'+esc(w.n)+'</b><div class="mu" id="wsm'+k+'">'+sumH(w)+'</div></div><span class="mu">▾</span></summary>'+(w.d?'<p class="mu">'+w.d+'</p>':"")+
+'<div class="row" style="gap:8px;align-items:flex-end"><div style="flex:1"><label for="wr'+k+'">Course avant chaque station</label><select id="wr'+k+'" onchange="wset('+k+')">'+ropt(w.run)+'</select></div><div style="flex:1"><label for="wv'+k+'">Volume</label><select id="wv'+k+'" onchange="wset('+k+')">'+vopt(w.f)+'</select></div></div>'+
+'<p class="mu" style="margin:6px 0 0">Volume = part des distances et des répétitions de la course officielle. Exemple à 50 % : 500 m de SkiErg au lieu de 1000 m, 50 wall balls au lieu de 100.</p>'+
+'<div class="mu" style="margin-top:10px">'+(w.r>1?"À répéter "+w.r+" fois :":"Déroulé :")+'</div><div id="wst'+k+'">'+stH(w,k)+'</div>'+
+'<div class="row" style="gap:8px;margin-top:10px"><input type="date" id="pd'+k+'" value="'+td()+'" style="flex:1"><button class="btn s" id="pb'+k+'" style="width:auto;margin:0" onclick="planW('+k+')">Ajouter au calendrier</button></div><button class="btn" onclick="startW('+k+')">Lancer l’entraînement</button>'+del+'</details>'}
+function trn(){var h='<p class="mu">Suggestions</p>';SUG.forEach(function(w,i){h+=wCard(w,i)});
+h+='<p class="mu" style="margin-top:14px">Mes entraînements</p>';
+if(WS.length)WS.forEach(function(w,i){h+=wCard(w,SUG.length+i)});else h+='<p class="mu">Aucun pour l’instant : touche + pour créer le tien.</p>';
+if(SL.length)h+=sesH();
+$("wl").innerHTML=h}
+function openW(){var h="";ST.forEach(function(s,i){h+='<label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:4px 0"><input type="checkbox" class="wc" value="'+i+'" style="width:auto"> '+s[0]+' <span class="mu">'+cv(s[1])+'</span></label>'});
+$("wst").innerHTML=h;$("wn").value="";$("wr").value=1;$("wrun").innerHTML=ropt(0);$("wrun").value="0";$("wf").value="1";$("werr").textContent="";$("wm").classList.remove("hide")}
+function closeW(){$("wm").classList.add("hide")}
+function saveW(){var n=$("wn").value.trim(),st=[],r=parseInt($("wr").value);
+Array.prototype.forEach.call(document.querySelectorAll(".wc"),function(c){if(c.checked)st.push(+c.value)});
+if(!n||!st.length||!(r>=1&&r<=10)){$("werr").textContent="Donne un nom, coche au moins une station et choisis 1 à 10 tours.";return}
+WS.push({n:n,r:r,st:st,run:+$("wrun").value,f:+$("wf").value});
+try{localStorage.setItem("hyroxW",JSON.stringify(WS))}catch(e){}
+closeW();trn()}
+var SS=null,sT=null,sqT=null;
+function buildSteps(w){var a=[];for(var t=1;t<=w.r;t++)w.st.forEach(function(si){var s=ST[si],x=s[3][ci()];
+if(w.run)a.push({n:"Course",d:w.run+" m",t:t});
+a.push({n:s[0],d:stepDet(w,si),t:t})});return a}
+function sqBack(){clearTimeout(sqT);sqT=null;var b=$("sq");b.textContent="Quitter la séance";b.style.color=""}
+function startW(k){beginW(ALLW()[k])}
+function startPL(i){PLID=PL[i].id;beginW(PL[i].w)}
+function beginW(w){SS={w:w,st:buildSteps(w),i:-1,cum:[],t0:0,done:false,plid:PLID};PLID=null;
+$("sn").textContent=w.n;$("sclk").textContent="0:00";$("sst").textContent="Prêt ?";$("sdt").textContent=SS.st.length+" étapes";$("spr").textContent="";$("ssum").innerHTML="";$("rpeS").classList.add("hide");
+$("snx").textContent="Démarrer";$("snx").onclick=sNext;sqBack();$("ses").classList.remove("hide")}
+function sShow(){var s=SS.st[SS.i];$("sst").textContent=s.n;$("sdt").textContent=cv(s.d);$("spr").textContent="Étape "+(SS.i+1)+"/"+SS.st.length+(SS.w.r>1?" · Tour "+s.t+"/"+SS.w.r:"")}
+function sNext(){vib();if(SS.i<0){SS.i=0;wkOn();SS.t0=Date.now();sT=setInterval(function(){$("sclk").textContent=fmt(Date.now()-SS.t0)},200);$("snx").textContent="Étape terminée";sShow();return}
+SS.cum.push(Date.now()-SS.t0);SS.i++;if(SS.i>=SS.st.length){sFin();return}sShow()}
+function sUndo(){if(SS&&!SS.done&&SS.i>0){SS.cum.pop();SS.i--;sShow()}}
+function sFin(){clearInterval(sT);sT=null;SS.done=true;wkOff();if(SS.plid){PL=PL.filter(function(p){return p.id!=SS.plid});sv("hyroxPL",PL)}var tot=SS.cum[SS.cum.length-1],h="",p=0;
+$("sclk").textContent=fmt(tot);$("sst").textContent="Séance terminée !";$("sdt").textContent="";$("spr").textContent="Temps total : "+fmt(tot);
+SS.st.forEach(function(s,i){var d=SS.cum[i]-p;p=SS.cum[i];h+='<div class="row" style="padding:6px 0;border-top:1px solid var(--bd)"><span>'+s.n+' <span class="mu">'+cv(s.d)+'</span></span><span class="t">'+fmt(d)+'</span></div>'});
+$("ssum").innerHTML=h;
+SL.unshift({d:new Date().toLocaleDateString("fr-FR"),n:SS.w.n,tot:tot,sp:SS.st.map(function(s,i){return {n:s.n,d:s.d,c:SS.cum[i]}})});SL=SL.slice(0,20);
+try{localStorage.setItem("hyroxS",JSON.stringify(SL))}catch(e){}
+$("snx").textContent="Fermer";$("snx").onclick=sClose;showRpe("s");trn()}
+function sClose(){wkOff();clearInterval(sT);sT=null;SS=null;sqBack();$("ses").classList.add("hide")}
+function sQuit(){var b=$("sq");if(!sqT){b.textContent="Confirmer : quitter sans enregistrer ?";b.style.color="var(--ko)";sqT=setTimeout(sqBack,3000);return}sClose()}
+function sesH(){var h='<p class="mu" style="margin-top:14px">Séances enregistrées</p>';
+SL.forEach(function(r,i){var d="",p=0,rn=0,sn=0;
+r.sp.forEach(function(s){var x=(s.c-p)/1000;p=s.c;if(s.n=="Course")rn+=x;else sn+=x;
+d+='<div class="row" style="padding:7px 0;border-top:1px solid var(--bd)"><div><b>'+s.n+'</b><div class="mu">'+cv(s.d)+'</div></div><div style="text-align:right"><div class="t">'+fs(x)+'</div><div class="mu">cumul '+fmt(s.c)+' · '+Math.round(x/(r.tot/1000)*100)+' %</div></div></div>'});
+h+='<details class="card"><summary class="row"><div><b>'+esc(r.n)+'</b><div class="mu">'+r.d+' · '+r.sp.length+' étapes</div><div class="mu">course '+fs(rn)+' · ateliers '+fs(sn)+'</div>'+(r.rpe?'<div class="mu">Effort perçu : '+r.rpe+'/10</div>':"")+'</div><span class="t" style="font-size:18px">'+fmt(r.tot)+'</span></summary>'+d+'<button class="btn s" id="ds'+i+'" onclick="dsl('+i+')">Supprimer la séance</button></details>'});
+return h}
+var dsT=null,dsI=-1;
+function dsBack(){clearTimeout(dsT);dsT=null;var b=$("ds"+dsI);if(b){b.textContent="Supprimer la séance";b.style.color=""}}
+function dsl(i){var b=$("ds"+i);if(dsT&&dsI==i){dsBack();SL.splice(i,1);try{localStorage.setItem("hyroxS",JSON.stringify(SL))}catch(e){}trn();return}
+if(dsT)dsBack();dsI=i;b.textContent="Confirmer la suppression ?";b.style.color="var(--ko)";dsT=setTimeout(dsBack,3000)}
+var SH=["Ski","Push","Pull","BBJ","Row","Farm","Lunge","WB"];
+function gavg(){var R=[],T=[];ST.forEach(function(){R.push([0,0]);T.push([0,0])});
+H.forEach(function(r){ST.forEach(function(s,i){var a=r.sp[2*i+1],b=r.sp[2*i];if(a==null||b==null)return;R[i][0]+=(a-b)/1000;R[i][1]++})});
+SL.forEach(function(r){var p=0;r.sp.forEach(function(s){var d=(s.c-p)/1000;p=s.c;ST.forEach(function(x,i){if(x[0]==s.n){T[i][0]+=d;T[i][1]++}})})});
+return {R:R.map(function(a){return a[1]?a[0]/a[1]:null}),T:T.map(function(a){return a[1]?a[0]/a[1]:null})}}
+function avgChart(){var A=gavg(),el=$("gavg"),any=A.R.concat(A.T).some(function(v){return v!=null});
+if(!any){el.innerHTML='<b>Temps moyen par atelier</b><p class="mu">Termine une course ou une séance pour voir tes moyennes.</p>';return}
+var W=360,HT=236,L=46,B=36,TP=12,RR=12,pw=W-L-RR,ph=HT-B-TP,mx=0;
+A.R.concat(A.T).forEach(function(v){if(v!=null&&v>mx)mx=v});
+var raw=(mx||60)/5,u=raw<=15?15:raw<=30?30:raw<=60?60:120,stp=u*Math.ceil(raw/u),top=stp*5;
+function X(i){return L+pw*i/7}
+function Y(v){return TP+ph*(1-v/top)}
+var s='<svg viewBox="0 0 '+W+' '+HT+'" width="100%" role="img" aria-label="Temps moyen par atelier" style="display:block;font-size:10px">';
+for(var g=0;g<=5;g++){var yy=Y(stp*g);s+='<line x1="'+L+'" x2="'+(W-RR)+'" y1="'+yy+'" y2="'+yy+'" style="stroke:var(--bd)"/><text x="'+(L-6)+'" y="'+(yy+3)+'" text-anchor="end" style="fill:var(--mu)">'+fs(stp*g)+'</text>'}
+ST.forEach(function(x,i){s+='<text x="'+X(i)+'" y="'+(HT-B+14)+'" text-anchor="middle" style="fill:var(--mu)">'+SH[i]+'</text>'});
+s+='<rect x="'+L+'" y="'+TP+'" width="'+pw+'" height="'+ph+'" style="fill:none;stroke:var(--tx)"/>';
+function ln(a,col){var p=[],c="";a.forEach(function(v,i){if(v!=null){p.push(X(i)+","+Y(v));c+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="3" style="fill:'+col+'"/>'}});return (p.length>1?'<polyline points="'+p.join(" ")+'" style="fill:none;stroke:'+col+';stroke-width:1.8"/>':"")+c}
+s+=ln(A.R,"var(--tx)")+ln(A.T,"var(--run)")+'<text x="'+(L+pw/2)+'" y="'+(HT-3)+'" text-anchor="middle" style="fill:var(--mu)">Ateliers</text></svg>';
+var lg='<div class="row mu" style="margin:6px 0"><span><i class="dot" style="background:var(--tx)"></i>Courses ('+H.length+')</span><span><i class="dot" style="background:var(--run)"></i>Entraînements ('+SL.length+')</span></div>';
+var rows="";ST.forEach(function(x,i){rows+='<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)"><span>'+x[0]+'</span><span class="t">'+(A.R[i]!=null?fs(A.R[i]):"–")+' <span class="mu">/</span> '+(A.T[i]!=null?fs(A.T[i]):"–")+'</span></div>'});
+el.innerHTML='<b>Temps moyen par atelier</b>'+lg+s+'<div class="mu" style="margin-top:10px">Moyennes (courses / entraînements)</div>'+rows+'<p class="mu">Les entraînements peuvent utiliser des distances et des charges différentes de la course.</p>';}
+var PLID=null,TS={};
+var MN=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"],WD=["dim.","lun.","mar.","mer.","jeu.","ven.","sam."];
+var PL=[],EVL=[];
+try{PL=JSON.parse(localStorage.getItem("hyroxPL")||"[]")}catch(e){PL=[]}
+try{EVL=JSON.parse(localStorage.getItem("hyroxEV")||"[]")}catch(e){EVL=[]}
+var CM=(function(){var n=new Date();return {y:n.getFullYear(),m:n.getMonth()}})(),CS=null;
+var REF=[
+{n:"HYROX Paris (décembre)",v:"Paris",ds:"2026-12-12",de:"2026-12-20"},
+{n:"HYROX Toulouse",v:"Toulouse",ds:"2027-02-03",de:"2027-02-07"},
+{n:"HYROX Chicago",v:"États-Unis",ds:"2027-02-11",de:"2027-02-15"},
+{n:"HYROX Madrid",v:"Espagne",ds:"2027-03-17",de:"2027-03-21"},
+{n:"HYROX Rotterdam",v:"Pays-Bas",ds:"2027-04-01",de:"2027-04-04"},
+{n:"HYROX Paris Grand Palais",v:"Paris",ds:"2027-04-08",de:"2027-04-12"},
+{n:"HYROX Malaga",v:"Espagne",ds:"2027-04-14",de:"2027-04-18"},
+{n:"HYROX Lyon",v:"Lyon",ds:"2027-05-12",de:"2027-05-16"},
+{n:"HYROX Rimini",v:"Italie",ds:"2027-05-27",de:"2027-05-30"}];
+var TPL=[{n:"Machines & cardio",r:3,run:400,st:[0,4]},{n:"Force & traineaux",r:3,run:0,st:[1,2,5,6]},{n:"Endurance des jambes",r:3,run:400,st:[3,6,7]},{n:"Course + SkiErg",r:4,run:1000,st:[0]}],
+SIM={n:"Simulation Hyrox",r:1,run:1000,st:[0,1,2,3,4,5,6,7]},END={n:"Endurance course",r:5,run:1000,st:[4]},ACT={n:"Activation avant épreuve",r:2,run:400,f:0.25,st:[0,7]};
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function pad(n){return (n<10?"0":"")+n}
+function dk(y,m,d){return y+"-"+pad(m+1)+"-"+pad(d)}
+function td(){var n=new Date();return dk(n.getFullYear(),n.getMonth(),n.getDate())}
+function pdt(k){var p=k.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
+function addD(k,n){var x=pdt(k);x.setDate(x.getDate()+n);return dk(x.getFullYear(),x.getMonth(),x.getDate())}
+function dd(a,b){return Math.round((pdt(b)-pdt(a))/864e5)}
+function fdate(k){return k.split("-").reverse().join("/")}
+function fk(s){var a=String(s).split("/");return a.length==3?a[2]+"-"+pad(+a[1])+"-"+pad(+a[0]):""}
+function two(id,lab,fn,arg){var b=$(id);if(!b)return;
+if(TS.id==id&&TS.t){clearTimeout(TS.t);TS={};fn(arg);return}
+if(TS.t){clearTimeout(TS.t);var o=$(TS.id);if(o){o.textContent=TS.lab;o.style.color=""}}
+b.textContent="Confirmer ?";b.style.color="var(--ko)";
+TS={id:id,lab:lab,t:setTimeout(function(){var q=$(id);if(q){q.textContent=lab;q.style.color=""}TS={}},3000)}}
+function planW(k){var d=$("pd"+k).value;if(!d)return;var w=JSON.parse(JSON.stringify(ALLW()[k]));PL.push({id:Date.now(),date:d,w:w});sv("hyroxPL",PL);
+var b=$("pb"+k);b.textContent="Ajouté ✓";setTimeout(function(){b.textContent="Ajouter au calendrier"},1500)}
+function dayItems(k){var o=[];
+EVL.forEach(function(e,i){if(e.date==k)o.push({t:"ev",c:"var(--ok)",l:e.n,i:i})});
+H.forEach(function(r,i){if(fk(r.d)==k)o.push({t:"race",c:"var(--ko)",l:(CATN[r.cat]||"Course")+" · "+fmt(r.tot),i:i})});
+SL.forEach(function(r,i){if(fk(r.d)==k)o.push({t:"ses",c:"#f59e0b",l:r.n+" · "+fmt(r.tot),i:i})});
+PL.forEach(function(p,i){if(p.date==k)o.push({t:"plan",c:"var(--run)",l:p.w.n+(p.ph?" · "+p.ph:""),i:i})});
+return o}
+function cmv(n){CM.m+=n;if(CM.m<0){CM.m=11;CM.y--}if(CM.m>11){CM.m=0;CM.y++}calRender()}
+function selD(k){CS=k;calRender()}
+function seeR(i){$("gsrc").value=String(i);tab(3)}
+function calRender(){if(!CS)CS=td();var y=CM.y,m=CM.m,off=CFG.wk?new Date(y,m,1).getDay():(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate(),rows=Math.ceil((off+dim)/7),h="",t=td();
+(CFG.wk?["D","L","M","M","J","V","S"]:["L","M","M","J","V","S","D"]).forEach(function(x){h+='<div class="mu" style="text-align:center">'+x+'</div>'});
+for(var i=0;i<rows*7;i++){var d=i-off+1;if(d<1||d>dim){h+='<div class="cd out"></div>';continue}
+var k=dk(y,m,d),it=dayItems(k),b="";
+it.slice(0,3).forEach(function(x){b+='<div class="bar" style="background:'+x.c+'"></div>'});
+h+='<div class="cd'+(k==t?" today":"")+(k==CS?" sel":"")+'" data-k="'+k+'" onclick="selD(this.dataset.k)"><div>'+d+'</div>'+b+(it.length>3?'<div class="more">+'+(it.length-3)+'</div>':"")+'</div>'}
+$("cmt").textContent=MN[m]+" "+y;$("cal").innerHTML=h;
+var its=dayItems(CS),dh='<div class="mu" style="margin:10px 0 4px">'+fdate(CS)+'</div>',sb='style="width:auto;margin:0;padding:8px 10px"';
+if(!its.length)dh+='<p class="mu">Rien de prévu ce jour-là.</p>';
+its.forEach(function(x){var bt="";if(x.t=="plan"){dh+=planH(x);return}
+if(x.t=="race")bt='<button class="btn s" '+sb+' onclick="seeR('+x.i+')">Voir</button><button class="btn s" id="cr'+x.i+'" '+sb+' onclick="drb('+x.i+')">Supprimer</button>';
+else if(x.t=="ses")bt='<button class="btn s" id="cs'+x.i+'" '+sb+' onclick="dsb('+x.i+')">Supprimer</button>';
+
+dh+='<div class="row" style="padding:7px 0;border-top:1px solid var(--bd)"><span style="min-width:0"><i class="dot" style="background:'+x.c+'"></i>'+esc(x.l)+'</span><span style="display:flex;gap:6px;flex-shrink:0">'+bt+'</span></div>'});
+dh+='<button class="btn s" onclick="addPl()">+ Ajouter une séance ce jour</button>';$("cdet").innerHTML=dh}
+function delRace(i){H.splice(i,1);sv("hyroxH",H);$("gsrc").value="last";graph()}
+function delSes(i){SL.splice(i,1);sv("hyroxS",SL);graph();trn()}
+function delPlan(i){PL.splice(i,1);sv("hyroxPL",PL);calRender()}
+function drb(i){two("cr"+i,"Supprimer",delRace,i)}
+function dsb(i){two("cs"+i,"Supprimer",delSes,i)}
+function dlb(i){two("cp"+i,"Supprimer",delPlan,i)}
+function gdl(){var v=$("gsrc").value;if(!/^\d+$/.test(v))return;two("gdel","Supprimer ce résultat",delRace,+v)}
+function evS(){var q=$("eq").value.toLowerCase().trim(),h="";
+REF.forEach(function(r,j){if(q&&(r.n+" "+r.v).toLowerCase().indexOf(q)<0)return;
+h+='<div class="row" style="padding:8px 0;border-top:1px solid var(--bd)"><div><b>'+r.n+'</b><div class="mu">'+fdate(r.ds).slice(0,5)+' → '+fdate(r.de)+' · '+r.v+'</div></div><button class="btn s" style="width:auto;margin:0" onclick="evAdd('+j+')">Ajouter</button></div>'});
+$("er").innerHTML=h||'<p class="mu">Aucun résultat : ajoute-le à la main ci-dessous.</p>'}
+function evPush(n,d,de){EVL.push({id:Date.now(),n:n,date:d,de:de||d});EVL.sort(function(a,b){return a.date<b.date?-1:1});sv("hyroxEV",EVL);evt()}
+function evAdd(j){var r=REF[j];if(EVL.some(function(e){return e.n==r.n&&e.date==r.ds}))return;evPush(r.n,r.ds,r.de)}
+function evAddC(){var n=$("en").value.trim(),d=$("ed").value;if(!n||!d){$("eerr").textContent="Renseigne un nom et une date.";return}$("eerr").textContent="";$("en").value="";evPush(n,d,d)}
+function evDate(i,v){if(!v)return;EVL[i].date=v;sv("hyroxEV",EVL);evt()}
+function progH(n){if(!n.length)return "";var a=n.slice().sort(function(x,y){return x.date<y.date?-1:1}),h="",lw="";
+a.forEach(function(p){var wd=(pdt(p.date).getDay()+6)%7,mo=addD(p.date,-wd);
+if(mo!=lw){h+='<div class="mu" style="margin-top:8px">Semaine du '+fdate(mo)+'</div>';lw=mo}
+h+='<div class="row" data-k="'+p.date+'" onclick="goDay(this.dataset.k)" style="padding:5px 0;border-top:1px solid var(--bd);cursor:pointer"><span>'+WD[pdt(p.date).getDay()]+' '+fdate(p.date).slice(0,5)+' · <b>'+esc(p.w.n)+'</b></span><span class="mu">'+esc(p.ph||"")+' · '+Math.round(p.w.f*100)+' %</span></div>'});
+return '<details style="margin-top:6px"><summary class="mu">Voir le programme ('+n.length+' séances) ▾</summary>'+h+'</details>'}
+function evCard(e,i){var days=dd(td(),e.date),cd=days>0?"J-"+days:(days==0?"Jour J":"Terminé"),n=PL.filter(function(p){return p.ev==e.id});
+return '<div class="card"><div class="row"><div><b>'+esc(e.n)+'</b><div class="mu">'+fdate(e.date)+'</div></div><div class="big" style="font-size:34px;margin:0">'+cd+'</div></div>'+
+'<label for="edt'+i+'">Date de ta course (jour J)</label><input type="date" id="edt'+i+'" value="'+e.date+'" onchange="evDate('+i+',this.value)">'+
+'<div class="row" style="gap:8px;align-items:flex-end"><div style="flex:1"><label for="ep'+i+'">Séances par semaine</label><select id="ep'+i+'"><option>2</option><option selected>3</option><option>4</option><option>5</option></select></div><button class="btn" style="flex:1;margin:0" onclick="genProg('+i+')">'+(n.length?"Régénérer":"Créer")+' le programme</button></div>'+
+'<p class="mu" id="pm'+i+'">'+(n.length?n.length+" séance(s) planifiée(s) jusqu’au jour J, visibles dans le calendrier.":"")+'</p>'+progH(n)+
+(n.length?'<button class="btn s" onclick="adapt('+i+')">Adapter selon mes résultats</button><button class="btn s" id="xp'+i+'" onclick="dpb('+i+')">Supprimer le programme</button>':"")+
+'<button class="btn s" id="xe'+i+'" onclick="deb('+i+')">Supprimer l’évènement</button></div>'}
+function evt(){evS();var h=EVL.length?"":'<p class="mu">Aucun évènement pour l’instant : ajoute-en un depuis la recherche.</p>';
+EVL.forEach(function(e,i){h+=evCard(e,i)});$("el").innerHTML=h}
+function genProg(i){var e=EVL[i],n=parseInt($("ep"+i).value),t0=td(),days=dd(t0,e.date),pm=$("pm"+i);
+if(days<3){pm.textContent="La date est trop proche pour créer un programme.";return}
+PL=PL.filter(function(p){return p.ev!=e.id});
+var pat={2:[1,5],3:[0,2,5],4:[0,1,3,5],5:[0,1,2,4,5]}[n]||[0,2,5],tw=Math.ceil(days/7),c=0;
+for(var k=1;k<days;k++){var d=addD(t0,k),dte=days-k,wl=Math.ceil(dte/7),wd=(pdt(d).getDay()+6)%7,w=tw-wl,T,f,ph;
+if(dte<=2)continue;
+if(wl==1){if(dte==5||dte==3){T=ACT;f=ACT.f;ph="Semaine de l’épreuve"}else continue}
+else{var sl=pat.indexOf(wd);if(sl<0)continue;
+var pr=tw>3?Math.min(1,Math.max(0,w/(tw-3))):1;f=Math.round((0.5+0.5*pr)*4)/4;
+if(w%4==3&&wl>2)f=Math.max(0.5,f-0.25);if(wl==2)f=0.5;
+T=sl==pat.length-1?((wl<=8&&wl%2==0&&wl>2)?SIM:END):TPL[(w+sl)%4];
+ph=wl==2?"Affûtage":(wl<=5?"Spécifique":"Base")}
+PL.push({id:Date.now()+c,date:d,ev:e.id,ph:ph,w:{n:T.n,r:T.r,run:T.run,f:f,st:T.st.slice(),ov:{}}});c++}
+sv("hyroxPL",PL);evt()}
+function delProg(i){PL=PL.filter(function(p){return p.ev!=EVL[i].id});sv("hyroxPL",PL);evt()}
+function delEv(i){PL=PL.filter(function(p){return p.ev!=EVL[i].id});EVL.splice(i,1);sv("hyroxPL",PL);sv("hyroxEV",EVL);evt()}
+function dpb(i){two("xp"+i,"Supprimer le programme",delProg,i)}
+function deb(i){two("xe"+i,"Supprimer l’évènement",delEv,i)}
+var CFG={lang:"fr",theme:"auto",vib:false,wake:false,wk:0,mu:"kg",du:"m",ac:0,clk:"num"},WK=null;
+try{var c0=JSON.parse(localStorage.getItem("hyroxC")||"null");if(c0)for(var q0 in c0)CFG[q0]=c0[q0]}catch(e){}
+var I18={fr:{hyrox:"Hyrox",event:"Évènement",profile:"Profil",settings:"Paramètres",race:"Course",training:"Entraînement",target:"Objectif",analysis:"Analyse",chart:"Graphe",history:"Historique",
+s_lang:"Langue",s_langn:"Langue de toute l’application.",s_theme:"Thème",s_auto:"Automatique (système)",s_light:"Clair",s_dark:"Sombre",s_cal:"Premier jour de la semaine (calendrier)",s_mon:"Lundi",s_sun:"Dimanche",
+s_vib:"Vibration à chaque étape terminée",s_wake:"Garder l’écran allumé pendant une course ou une séance",s_bk:"Sauvegarde des données",s_bkn:"Exporte tes données dans le champ ci-dessous pour les copier, ou colle une sauvegarde pour la restaurer.",s_exp:"Exporter",s_imp:"Importer",s_ok:"Données importées.",s_bad:"Sauvegarde invalide.",
+s_about:"À propos",s_abn:"Hyrox Coach · les données restent sur cet appareil.",s_acc:"Compte",s_del:"Supprimer mon compte et toutes mes données",s_deln:"Efface ton profil, tes courses, séances, entraînements, évènements et réglages."},
+en:{hyrox:"Hyrox",event:"Event",profile:"Profile",settings:"Settings",race:"Race",training:"Training",target:"Target",analysis:"Analysis",chart:"Chart",history:"History",
+s_lang:"Language",s_langn:"Language of the whole app.",s_theme:"Theme",s_auto:"Automatic (system)",s_light:"Light",s_dark:"Dark",s_cal:"First day of the week (calendar)",s_mon:"Monday",s_sun:"Sunday",
+s_vib:"Vibrate when a step is done",s_wake:"Keep the screen on during a race or session",s_bk:"Data backup",s_bkn:"Export your data into the field below to copy it, or paste a backup to restore it.",s_exp:"Export",s_imp:"Import",s_ok:"Data imported.",s_bad:"Invalid backup.",
+s_about:"About",s_abn:"Hyrox Coach · your data stays on this device.",s_acc:"Account",s_del:"Delete my account and all my data",s_deln:"Erases your profile, races, sessions, workouts, events and settings."}};
+function T(k){var l=I18[CFG.lang]||I18.fr;return l[k]!=null?l[k]:I18.fr[k]}
+function applyCfg(){var r=document.documentElement,a=ACS[CFG.ac]||ACS[0],mm=document.querySelector("main");
+if(CFG.theme=="light"||CFG.theme=="dark")r.setAttribute("data-theme",CFG.theme);else r.removeAttribute("data-theme");
+r.lang=CFG.lang;r.style.setProperty("--ac",a[1]);r.style.setProperty("--acx",a[2]);if(mm)mm.style.setProperty("--run",CFG.ac==1?"#8a8a96":"#4a8fe7");segNames();applyClk()}
+function vib(){if(CFG.vib&&navigator.vibrate){try{navigator.vibrate(50)}catch(e){}}}
+function wkOn(){if(!CFG.wake||!navigator.wakeLock)return;try{navigator.wakeLock.request("screen").then(function(l){WK=l}).catch(function(){})}catch(e){}}
+function wkOff(){try{if(WK){WK.release();WK=null}}catch(e){}}
+function cfgSave(){sv("hyroxC",CFG)}
+function sLang(v){CFG.lang=v;cfgSave();applyCfg();trAll();rnd()}
+function sTheme(v){CFG.theme=v;cfgSave();applyCfg()}
+function sWk(v){CFG.wk=+v;cfgSave()}
+function sVib(c){CFG.vib=c;cfgSave();if(c)vib()}
+function sWake(c){CFG.wake=c;cfgSave()}
+function oo(a,s){return a.map(function(x){return '<option value="'+x[0]+'"'+(x[0]==s?" selected":"")+'>'+x[1]+'</option>'}).join("")}
+function cb(t,on,fn){return '<label style="display:flex;gap:10px;align-items:center;font-weight:500;margin:6px 0"><input type="checkbox" '+(on?"checked ":"")+'style="width:auto" onchange="'+fn+'(this.checked)">'+t+'</label>'}
+function setR(){$("set").innerHTML=
+'<div class="card"><label style="margin-top:0" for="sl">'+T("s_lang")+'</label><select id="sl" onchange="sLang(this.value)">'+oo([["fr","Français"],["en","English"]],CFG.lang)+'</select><p class="mu" style="margin:6px 0 0">'+T("s_langn")+'</p></div>'+
+'<div class="card"><label style="margin-top:0" for="sth">'+T("s_theme")+'</label><select id="sth" onchange="sTheme(this.value)">'+oo([["auto",T("s_auto")],["light",T("s_light")],["dark",T("s_dark")]],CFG.theme)+'</select><label for="swk">'+T("s_cal")+'</label><select id="swk" onchange="sWk(this.value)">'+oo([[0,T("s_mon")],[1,T("s_sun")]],CFG.wk)+'</select></div>'+
+'<div class="card"><b>'+T("s_units")+'</b><label for="smu">'+T("s_mass")+'</label><select id="smu" onchange="sMu(this.value)">'+oo([["kg","kg"],["lb","lb"]],CFG.mu)+'</select><label for="sdu">'+T("s_dist")+'</label><select id="sdu" onchange="sDu(this.value)">'+oo([["m","m"],["ft","ft"],["yd","yd"],["mi","mi"]],CFG.du)+'</select></div>'+
+'<div class="card"><b>'+T("s_col")+'</b><div class="sw">'+ACS.map(function(c,i){return '<button class="'+(CFG.ac==i?"on":"")+'" style="background:'+c[1]+'" aria-label="'+c[0]+'" onclick="sAc('+i+')"></button>'}).join("")+'</div></div>'+
+'<div class="card">'+cb(T("s_vib"),CFG.vib,"sVib")+cb(T("s_wake"),CFG.wake,"sWake")+'</div>'+
+'<div class="card"><b>'+T("s_bk")+'</b><p class="mu">'+T("s_bkn")+'</p><textarea id="bk" rows="4" style="width:100%;font:12px monospace;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:8px"></textarea><div class="row" style="gap:8px"><button class="btn s" onclick="bkExp()">'+T("s_exp")+'</button><button class="btn s" onclick="bkImp()">'+T("s_imp")+'</button></div><p class="mu" id="bkm"></p></div>'+
+'<div class="card"><b>'+T("s_inst")+'</b><p class="mu">'+T("s_instn")+'</p><button class="btn s" id="instb" onclick="instApp()">'+T("s_instb")+'</button><p class="mu" id="offs">'+offStatus()+'</p></div>'+
+'<div class="card"><button class="btn s" style="margin:0" onclick="tourStart()">'+T("s_tour")+'</button></div>'+
+'<div class="card"><b>'+T("s_about")+'</b><p class="mu">'+T("s_abn")+'</p></div>'+
+'<div class="card"><b>'+T("s_acc")+'</b><p class="mu">'+T("s_deln")+'</p><button class="btn s" id="sdel" onclick="sdl()">'+T("s_del")+'</button></div>'}
+function bkExp(){$("bk").value=JSON.stringify({H:H,SL:SL,WS:WS,PL:PL,EVL:EVL,P:P,CFG:CFG,RLY:RLY})}
+function bkImp(){try{var d=JSON.parse($("bk").value);
+if(Array.isArray(d.H)){H=d.H;sv("hyroxH",H)}if(Array.isArray(d.SL)){SL=d.SL;sv("hyroxS",SL)}if(Array.isArray(d.WS)){WS=d.WS;sv("hyroxW",WS)}if(Array.isArray(d.PL)){PL=d.PL;sv("hyroxPL",PL)}if(Array.isArray(d.EVL)){EVL=d.EVL;sv("hyroxEV",EVL)}
+if(d.P){P=d.P;if(P.av==4&&P.photo)P.av=99;sv("hyroxP",P)}if(d.CFG){for(var k in d.CFG)CFG[k]=d.CFG[k];cfgSave()}if(d.RLY&&d.RLY.names&&d.RLY.asg){RLY=d.RLY;sv("hyroxR",RLY)}
+applyCfg();drawP();rnd();$("bkm").textContent=T("s_ok")}catch(e){$("bkm").textContent=T("s_bad")}}
+function delAcc(){["hyroxH","hyroxS","hyroxW","hyroxPL","hyroxEV","hyroxP","hyroxC","hyroxR"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
+H=[];SL=[];WS=[];PL=[];EVL=[];P=null;pphoto="";RLY=defRly();CFG={lang:"fr",theme:"auto",vib:false,wake:false,wk:0,mu:"kg",du:"m",ac:0,clk:"num"};
+if(SS)sClose();resetAll();applyCfg();drawP();tab(1);wzStart()}
+function sdl(){two("sdel",T("s_del"),delAcc)}
+function stR(w){var o='<div class="mu" style="margin-top:8px">'+(w.r>1?"À répéter "+w.r+" fois :":"Déroulé :")+'</div>',bd='<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)">';
+w.st.forEach(function(si){if(w.run)o+=bd+'<span>Course</span><span class="t">'+cv(w.run+' m')+'</span></div>';o+=bd+'<b>'+ST[si][0]+'</b><span class="t">'+cv(stepDet(w,si))+'</span></div>'});return o}
+function planH(x){var p=PL[x.i],w=p.w,sb='style="width:auto;margin:0;padding:8px 10px"';
+return '<details class="card" style="margin:6px 0;padding:10px"><summary class="row"><span><i class="dot" style="background:var(--run)"></i><b>'+esc(w.n)+'</b>'+(p.ph?' <span class="mu">· '+esc(p.ph)+'</span>':"")+'</span><span class="mu">▾</span></summary><div class="mu" style="margin-top:6px">'+sumH(w)+'</div>'+stR(w)+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn s" '+sb+' onclick="startPL('+x.i+')">Lancer</button><button class="btn s" '+sb+' onclick="ewOpen('+x.i+')">Modifier</button><button class="btn s" id="cp'+x.i+'" '+sb+' onclick="dlb('+x.i+')">Supprimer</button></div></details>'}
+var EW=null,PI=-1,EWNEW=false;
+function addPl(){var w=JSON.parse(JSON.stringify(TPL[0]));w.f=0.5;w.ov={};w.n="Nouvelle séance";PL.push({id:Date.now(),date:CS,w:w});sv("hyroxPL",PL);ewOpen(PL.length-1,true)}
+function ewOpen(i,isNew){PI=i;EWNEW=!!isNew;var p=PL[i];EW=JSON.parse(JSON.stringify(p.w));EW.ov=EW.ov||{};
+$("pen").value=EW.n;$("ped").value=p.date;$("per").value=EW.r;$("peu").innerHTML=ropt(EW.run);$("pev").innerHTML=vopt(EW.f);$("peerr").textContent="";
+var h="";ST.forEach(function(s,j){h+='<label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:4px 0"><input type="checkbox" '+(EW.st.indexOf(j)>-1?"checked ":"")+'value="'+j+'" style="width:auto" onchange="ewSt()">'+s[0]+'</label>'});
+$("pes").innerHTML=h;ewLst();$("pe").classList.remove("hide")}
+function ewLst(){$("pel").innerHTML='<div class="mu" style="margin:8px 0 2px">Distances, répétitions et charges</div>'+stH(EW,-1)}
+function ewSt(){var a=[];Array.prototype.forEach.call(document.querySelectorAll("#pes input"),function(c){if(c.checked)a.push(+c.value)});a.sort(function(x,y){return x-y});EW.st=a;ewLst()}
+function ewSet(){var nf=+$("pev").value;if(nf!=EW.f)EW.ov={};EW.f=nf;EW.run=+$("peu").value;var r=parseInt($("per").value);if(r>=1&&r<=10)EW.r=r;ewLst()}
+function ewSave(){var n=$("pen").value.trim(),d=$("ped").value,r=parseInt($("per").value);
+if(!n||!d||!EW.st.length||!(r>=1&&r<=10)){$("peerr").textContent="Renseigne un nom, une date, 1 à 10 tours et au moins une station.";return}
+EW.n=n;EW.r=r;PL[PI].w=EW;PL[PI].date=d;sv("hyroxPL",PL);EWNEW=false;$("pe").classList.add("hide");
+CS=d;var p=d.split("-");CM={y:+p[0],m:+p[1]-1};calRender()}
+function ewClose(){if(EWNEW&&PI>=0){PL.splice(PI,1);sv("hyroxPL",PL)}EWNEW=false;$("pe").classList.add("hide");calRender()}
+function goDay(k){CS=k;var p=k.split("-");CM={y:+p[0],m:+p[1]-1};tab(7)}
+var PW=["1000 m","202 kg","153 kg","80 m","1000 m","2 × 32 kg","30 kg","9 kg"];
+PW.forEach(function(w,i){if(ST[i][3].length<3)ST[i][3].push(w)});
+var CATI={h:0,f:1,hs:0,hd:0,fs:1,fd:1,md:0,phs:2,pfs:0,phd:2,pfd:0,rh:0,rf:1,rm:0},CATD={hd:1,fd:1,md:1,phd:1,pfd:1},CATR={rh:1,rf:1,rm:1};
+CATN.md="Open Mixte · Double";CATN.phs="Pro Homme · Simple";CATN.pfs="Pro Femme · Simple";CATN.phd="Pro Homme · Double";CATN.pfd="Pro Femme · Double";CATN.rh="Relais Homme";CATN.rf="Relais Femme";CATN.rm="Relais Mixte";
+var ACS=[["Jaune","#f5c400","#16161a"],["Bleu","#2f7de1","#ffffff"],["Orange","#f26a1b","#16161a"],["Rouge","#e5383b","#ffffff"],["Vert","#2fa84f","#ffffff"],["Violet","#8a4fe0","#ffffff"],["Rose","#e6498f","#ffffff"],["Marron","#8b5a2b","#ffffff"]];
+Object.assign(I18.fr,{s_units:"Unités",s_mass:"Masse",s_dist:"Distance",s_col:"Couleur d’accentuation"});
+Object.assign(I18.en,{s_units:"Units",s_mass:"Weight",s_dist:"Distance",s_col:"Accent color"});
+function fromM(m){var u=CFG.du;if(u=="ft")return Math.round(m*3.28084);if(u=="yd")return Math.round(m*1.09361);if(u=="mi")return Math.round(m*0.000621371*100)/100;return m}
+function toM(v){var u=CFG.du;if(u=="ft")return v/3.28084;if(u=="yd")return v/1.09361;if(u=="mi")return v/0.000621371;return v}
+function fromKg(k){return CFG.mu=="lb"?Math.round(k*2.20462):k}
+function toKg(v){return CFG.mu=="lb"?v/2.20462:v}
+function cv(s){return String(s).replace(/(\d+(?:\.\d+)?)\s*(kg|km|m)\b/g,function(a,n,u){n=parseFloat(n);
+if(u=="kg")return CFG.mu=="lb"?Math.round(n*2.20462)+" lb":a;
+if(CFG.du=="m")return a;
+var m=u=="km"?n*1000:n,v=fromM(m);if(CFG.du=="mi"&&v<0.1)v=Math.round(m*0.000621371*1000)/1000;
+return v+" "+CFG.du})}
+function dlabel(x){if(CFG.du=="m")return x%1000==0?x/1000+" km":x+" m";return cv(x+" m")}
+function qd(w,si){var q=qOf(w,si);return un(si)=="m"?fromM(q):q}
+function kd(w,si){return fromKg(kgOf(w,si))}
+function ul(si){return un(si)=="m"?CFG.du:un(si)}
+function segNames(){SEG.forEach(function(s,i){if(i%2==0)s.n="Course "+(i/2+1)+" · "+cv("1 km")})}
+function fillPS(){var h='<option value="">—</option>',w=h,a=h,i,o=[$("ph").value,$("pw").value,$("pa").value];
+for(i=140;i<=220;i++)h+='<option value="'+i+'">'+i+' cm</option>';
+for(i=35;i<=200;i++)w+='<option value="'+i+'">'+fromKg(i)+' '+CFG.mu+'</option>';
+for(i=12;i<=90;i++)a+='<option value="'+i+'">'+i+' ans</option>';
+$("ph").innerHTML=h;$("pw").innerHTML=w;$("pa").innerHTML=a;$("ph").value=o[0];$("pw").value=o[1];$("pa").value=o[2]}
+function sMu(v){CFG.mu=v;cfgSave();fillPS();drawP();rnd()}
+function sDu(v){CFG.du=v;cfgSave();applyCfg();pcUpd();rnd()}
+function sAc(i){CFG.ac=i;cfgSave();applyCfg();setR()}
+var RPEL=["","Très facile","Facile","Léger","Modéré","Soutenu","Dur","Très dur","Très très dur","Presque maximal","Maximal"];
+function showRpe(k){var t=k=="r"?H[0]:SL[0],el=$(k=="r"?"rpeR":"rpeS");if(!t)return;
+var h='<div class="mu" style="margin-top:12px"><b>Effort perçu (1 à 10)</b></div><div class="rpe">';
+for(var i=1;i<=10;i++)h+='<button class="'+(t.rpe==i?"on":"")+'" data-k="'+k+'" data-n="'+i+'" onclick="rpeSet(this.dataset.k,+this.dataset.n)">'+i+'</button>';
+h+='</div><div class="mu" style="margin-top:6px">'+(t.rpe?RPEL[t.rpe]:"Touche un chiffre pour noter ta séance")+'</div>';
+el.innerHTML=h;el.classList.remove("hide")}
+function rpeSet(k,n){var t=k=="r"?H[0]:SL[0];if(!t)return;t.rpe=n;if(k=="r")sv("hyroxH",H);else sv("hyroxS",SL);showRpe(k)}
+function histS(){var el=$("hists");if(!SL.length){el.innerHTML="";return}
+var h='<p class="mu" style="margin:14px 0 6px">Séances d’entraînement</p>';
+SL.forEach(function(r){var d="",p=0,rn=0,sn=0;
+r.sp.forEach(function(s){var x=(s.c-p)/1000;p=s.c;if(s.n=="Course")rn+=x;else sn+=x;
+d+='<div class="row" style="padding:7px 0;border-top:1px solid var(--bd)"><div><b>'+s.n+'</b><div class="mu">'+cv(s.d)+'</div></div><div style="text-align:right"><div class="t">'+fs(x)+'</div><div class="mu">cumul '+fmt(s.c)+'</div></div></div>'});
+h+='<details class="card"><summary class="row"><div><b>'+esc(r.n)+'</b><div class="mu">'+r.d+' · course '+fs(rn)+' · ateliers '+fs(sn)+'</div>'+(r.rpe?'<div class="mu">Effort perçu : '+r.rpe+'/10 · '+RPEL[r.rpe]+'</div>':"")+'</div><span class="t" style="font-size:18px">'+fmt(r.tot)+'</span></summary>'+d+'</details>'});
+el.innerHTML=h}
+function dialB(id){var s='<circle cx="100" cy="100" r="96" style="fill:var(--card);stroke:var(--tx);stroke-width:3"/>',i,a,c;
+for(i=0;i<60;i++){a=i*Math.PI/30;c=i%5?4:9;s+='<line x1="'+(100+90*Math.sin(a)).toFixed(1)+'" y1="'+(100-90*Math.cos(a)).toFixed(1)+'" x2="'+(100+(90-c)*Math.sin(a)).toFixed(1)+'" y2="'+(100-(90-c)*Math.cos(a)).toFixed(1)+'" style="stroke:var(--tx);stroke-width:'+(i%5?1:2)+'"/>'}
+for(i=1;i<=12;i++){a=i*Math.PI/6;s+='<text x="'+(100+72*Math.sin(a)).toFixed(1)+'" y="'+(100-72*Math.cos(a)+4).toFixed(1)+'" text-anchor="middle" style="fill:var(--mu);font-size:11px">'+(i*5%60)+'</text>'}
+s+='<line id="'+id+'h" x1="100" y1="100" x2="100" y2="58" style="stroke:var(--mu);stroke-width:4;stroke-linecap:round"/><line id="'+id+'m" x1="100" y1="100" x2="100" y2="36" style="stroke:var(--tx);stroke-width:3;stroke-linecap:round"/><line id="'+id+'s" x1="100" y1="100" x2="100" y2="22" style="stroke:var(--ko);stroke-width:2;stroke-linecap:round"/><circle cx="100" cy="100" r="4" style="fill:var(--ko)"/>';
+$(id).innerHTML=s}
+function dialS(id,s){$(id+"s").setAttribute("transform","rotate("+(s%60)*6+" 100 100)");$(id+"m").setAttribute("transform","rotate("+((s/60)%60)*6+" 100 100)");$(id+"h").setAttribute("transform","rotate("+((s/3600)%12)*30+" 100 100)")}
+function initClk(){dialB("aclock");dialB("asclk");
+[["clock","aclock"],["sclk","asclk"]].forEach(function(p){var f=function(){var s=0;$(p[0]).textContent.split(":").forEach(function(v){s=s*60+(parseInt(v)||0)});dialS(p[1],s)};
+if(window.MutationObserver)new MutationObserver(f).observe($(p[0]),{childList:true,characterData:true,subtree:true});f()})}
+function applyClk(){var a=CFG.clk=="ana";["clock","sclk"].forEach(function(i){$(i).classList.toggle("hide",a)});["aclock","asclk"].forEach(function(i){$(i).classList.toggle("hide",!a)});$("clk").value=CFG.clk;$("clk2").value=CFG.clk}
+function sClk(v){CFG.clk=v;cfgSave();applyClk()}
+Object.assign(I18.fr,{addev:"Ajouter un évènement",calendar:"Calendrier"});
+Object.assign(I18.en,{addev:"Add an event",calendar:"Calendar"});
+Object.assign(I18.fr,{s_tour:"Revoir le guide de l’application"});
+Object.assign(I18.en,{s_tour:"Replay the app guide"});
+var APP="Hyrox Coach",WZI=0,WV={ln:"",fn:"",a:"",w:"",h:"",g:""};
+var WZT=["Bienvenue sur "+APP+" 👋","Choisis ton avatar","Ton nom et ton prénom","Ton âge","Ton poids","Ta taille","Ton genre"];
+function wzO(a,b,f,sel){var h='<option value="">—</option>';for(var i=a;i<=b;i++)h+='<option value="'+i+'"'+(sel==i?" selected":"")+'>'+f(i)+'</option>';return h}
+function pickPh(){$("pf").click()}
+function wzStart(){WZI=0;pav=0;pphoto="";WV={ln:"",fn:"",a:"",w:"",h:"",g:""};wzRender();$("wz").classList.remove("hide")}
+function wzRender(){var i=WZI,h="",n=WZT.length-1;$("wze").textContent="";
+$("wzc").textContent=i?"Étape "+i+" sur "+n:"Première ouverture";$("wzi").style.width=(i/n*100)+"%";
+$("wzp").classList.toggle("hide",i==0);$("wzn").textContent=i==n?"Terminer":(i==0?"C’est parti":"Suivant");$("wzt").textContent=WZT[i];
+if(i==0)h='<p>On va créer ton profil d’utilisateur : ton avatar, ton nom, ton prénom, ton âge, ton poids et ta taille.</p><p class="mu">Ces infos restent sur ton appareil. Ensuite, un petit guide te présentera l’application étape par étape.</p>';
+else if(i==1)h='<div class="av" id="wzav"></div><button class="btn s" style="margin-top:8px" onclick="pickPh()">Importer une photo</button>';
+else if(i==2)h='<label for="wzln">Nom</label><input id="wzln" type="text" maxlength="24" value="'+esc(WV.ln)+'" oninput="WV.ln=this.value"><label for="wzfn">Prénom</label><input id="wzfn" type="text" maxlength="20" value="'+esc(WV.fn)+'" oninput="WV.fn=this.value">';
+else if(i==3)h='<select id="wza" onchange="WV.a=this.value">'+wzO(12,90,function(k){return k+" ans"},WV.a)+'</select>';
+else if(i==4)h='<select id="wzw" onchange="WV.w=this.value">'+wzO(35,200,function(k){return fromKg(k)+" "+CFG.mu},WV.w)+'</select><p class="mu">L’unité se change dans les paramètres.</p>';
+else if(i==5)h='<select id="wzh" onchange="WV.h=this.value">'+wzO(140,220,function(k){return k+" cm"},WV.h)+'</select>';
+else h='<select id="wzg" onchange="WV.g=this.value"><option value="">—</option><option value="h"'+(WV.g=="h"?" selected":"")+'>Homme</option><option value="f"'+(WV.g=="f"?" selected":"")+'>Femme</option></select><p class="mu">Il sert à présélectionner ta catégorie et les charges.</p>';
+$("wzb").innerHTML=h;if(i==1)renderAv()}
+function wzOk(){var i=WZI,m="";
+if(i==2&&(!WV.fn.trim()||!WV.ln.trim()))m="Renseigne ton nom et ton prénom.";
+else if(i==3&&!WV.a)m="Choisis ton âge.";else if(i==4&&!WV.w)m="Choisis ton poids.";else if(i==5&&!WV.h)m="Choisis ta taille.";else if(i==6&&!WV.g)m="Choisis ton genre.";
+$("wze").textContent=m;return !m}
+function wzNext(){if(!wzOk())return;if(WZI==WZT.length-1){wzDone();return}WZI++;wzRender()}
+function wzBack(){if(WZI>0){WZI--;wzRender()}}
+function wzDone(){P={n:WV.fn.trim(),ln:WV.ln.trim(),a:+WV.a,w:+WV.w,h:+WV.h,g:WV.g,av:pav,photo:pphoto};sv("hyroxP",P);
+if(!run&&P.g=="f"&&$("cat").value=="hs"){$("cat").value="fs";refresh()}
+$("wz").classList.add("hide");drawP();tourStart()}
+var TI=0,TOUR=[
+{pre:function(){tab(1)},sel:"#b0",t:"Hyrox",p:"Ton espace principal : chronomètre ta course et lance tes entraînements."},
+{pre:function(){tab(1)},sel:"#snav",t:"Course et Entraînement",p:"Bascule ici entre la course chronométrée et les séances d’entraînement."},
+{pre:function(){tab(1)},sel:"#p1 .row",t:"Catégorie et chrono",p:"Choisis ta catégorie (Open, Pro ou Relais, Simple ou Double) et le style du chrono : numérique ou analogique."},
+{pre:function(){tab(1)},sel:"#go",t:"Lance ta course",p:"Appuie sur Démarrer, puis à chaque fin de course ou d’atelier. À l’arrivée, note ton effort perçu."},
+{pre:function(){tab(1)},sel:"#rmo",t:"Suivi en direct et plein écran",p:"Pendant la course, vois ton écart avec l’objectif et ton arrivée estimée. Le mode plein écran affiche un gros chrono et un gros bouton, pratique avec des gants."},
+{pre:function(){tab(5)},sel:"#p5 .me",t:"Tes entraînements",p:"Choisis une suggestion ou crée la tienne avec le bouton +, puis lance-la avec son chrono."},
+{pre:function(){tab(6)},sel:"#b1",t:"Évènement",p:"Ajoute une épreuve, suis le compte à rebours en jours, génère un programme jusqu’au jour J et retrouve tout dans le calendrier. Le programme peut s’adapter à tes résultats."},
+{pre:function(){tab(9)},sel:"#snav2",t:"Analyse",p:"Graphes, historique, records personnels et charge d’entraînement : tout pour suivre ta progression."},
+{pre:function(){tab(2)},sel:"#rep b",t:"Repères personnalisés",p:"Ta fréquence cardiaque max estimée, tes zones d’effort et ta dépense énergétique, calculées avec ton profil."},
+{pre:function(){tab(8)},sel:"#b3",t:"Paramètres",p:"Langue, thème, couleur, unités (kg ou lb, m, ft, yd ou mi), sauvegarde et suppression du compte. Tu peux aussi installer l’application pour l’utiliser hors ligne."},
+{pre:function(){tab(1)},sel:"#me",t:"Ton avatar",p:"Touche-le à tout moment pour modifier ton profil."},
+{pre:function(){tab(1)},sel:null,t:"C’est parti ! 💪",p:"Tu es prêt : bonne séance."}];
+function tourStart(){TI=0;$("tour").classList.remove("hide");tourShow()}
+function tourEnd(){$("tour").classList.add("hide");CFG.tour=1;cfgSave();tab(1)}
+function tourNext(){TI++;if(TI>=TOUR.length){tourEnd();return}tourShow()}
+function tourShow(){var s=TOUR[TI];if(s.pre)s.pre();
+$("tt").textContent=s.t;$("tp").textContent=s.p;$("tcnt").textContent=(TI+1)+" / "+TOUR.length;$("tnx").textContent=TI==TOUR.length-1?"Terminer":"Suivant";
+setTimeout(tourPlace,80)}
+function tourPlace(){var s=TOUR[TI],tip=$("ttip"),sp=$("tspot"),ar=$("tarr"),el=s.sel?document.querySelector(s.sel):null,vw=window.innerWidth,vh=window.innerHeight,w=Math.min(340,vw-24);
+tip.style.width=w+"px";
+if(!el){$("tour").style.background="rgba(0,0,0,.65)";sp.style.display="none";ar.style.display="none";tip.style.left=(vw-w)/2+"px";tip.style.top=Math.max(20,(vh-tip.offsetHeight)/2)+"px";return}
+$("tour").style.background="";try{el.scrollIntoView({block:"center"})}catch(e){}var r=el.getBoundingClientRect();sp.style.display="block";ar.style.display="block";
+sp.style.left=(r.left-6)+"px";sp.style.top=(r.top-6)+"px";sp.style.width=(r.width+12)+"px";sp.style.height=(r.height+12)+"px";
+var th=tip.offsetHeight,below=r.bottom+th+28<vh,left=Math.min(Math.max(r.left+r.width/2-w/2,12),vw-w-12);
+tip.style.left=left+"px";tip.style.top=(below?r.bottom+16:Math.max(8,r.top-th-16))+"px";
+ar.style.left=Math.min(Math.max(r.left+r.width/2-left-8,16),w-32)+"px";ar.className=below?"up":"dn"}
+var EN=[
+["Aucune course enregistrée pour l’instant.","No race recorded yet."],
+["Ajoute une épreuve, suis le compte à rebours en jours, génère un programme jusqu’au jour J et retrouve tout dans le calendrier.","Add an event, follow the day countdown, generate a program up to race day and find everything in the calendar."],
+["Ces infos restent sur ton appareil. Tu pourras les modifier à tout moment en touchant ton avatar en haut à droite.","This info stays on your device. You can edit it at any time by tapping your avatar at the top right."],
+["Ces infos restent sur ton appareil. Ensuite, un petit guide te présentera l’application étape par étape.","This info stays on your device. Then a short guide will walk you through the app step by step."],
+["On va créer ton profil d’utilisateur : ton avatar, ton nom, ton prénom, ton âge, ton poids et ta taille.","Let’s create your user profile: your avatar, last name, first name, age, weight and height."],
+["Choisis ta catégorie (Open, Pro ou Relais, Simple ou Double) et le style du chrono : numérique ou analogique.","Choose your category (Open, Pro or Relay, Singles or Doubles) and the timer style: digital or analog."],
+["Objectif : tes temps cibles par segment. Analyse : graphes, historique, records et charge d’entraînement.","Target: your goal times per segment. Analysis: charts, history, records and training load."],
+["Saisis le temps de chaque segment au format m:ss. Les champs sont préremplis avec le calcul du mode Auto.","Enter the time of each segment as m:ss. Fields are prefilled from the Auto mode calculation."],
+["Exporte tes données dans le champ ci-dessous pour les copier, ou colle une sauvegarde pour la restaurer.","Export your data into the field below to copy it, or paste a backup to restore it."],
+["Les 8 stations à demi-volume, avec 1 km de course avant chacune. Un bon test avant une compétition.","All 8 stations at half volume, with a 1 km run before each. A good test before a competition."],
+["Appuie sur Démarrer, puis à chaque fin de course ou d’atelier. À l’arrivée, note ton effort perçu.","Tap Start, then at the end of each run or station. At the finish, rate your perceived effort."],
+["Langue, thème, couleur, unités (kg ou lb, m, ft, yd ou mi), sauvegarde et suppression du compte.","Language, theme, color, units (kg or lb, m, ft, yd or mi), install, backup and account deletion."],
+["Choisis une suggestion ou crée la tienne avec le bouton +, puis lance-la avec son chrono.","Pick a suggestion or create your own with the + button, then start it with its timer."],
+["Les entraînements peuvent utiliser des distances et des charges différentes de la course.","Workouts may use different distances and loads than the race."],
+["Le temps de course à pied dépasse ton objectif : augmente le temps ou ralentis l’allure.","Running time exceeds your target: increase the time or slow the pace."],
+["Pour découvrir le format : 4 stations à demi-volume, avec 500 m de course entre chaque.","To discover the format: 4 stations at half volume, with 500 m of running between each."],
+["Travail de poussée, de traction et de portés. Repos de 1 à 2 min entre les tours.","Pushing, pulling and carrying work. Rest 1 to 2 min between rounds."],
+["Dates indicatives de la saison HYROX 2026/27 : vérifie-les sur le site officiel.","Indicative dates for the 2026/27 HYROX season: check them on the official site."],
+["Efface ton profil, tes courses, séances, entraînements, évènements et réglages.","Erases your profile, races, sessions, workouts, events and settings."],
+["Renseigne un prénom, un nom, une taille (cm), un poids (kg) et un âge valides.","Enter a valid first name, last name, height (cm), weight (kg) and age."],
+["Ton espace principal : chronomètre ta course et lance tes entraînements.","Your main area: time your race and start your workouts."],
+["Bascule ici entre la course chronométrée et les séances d’entraînement.","Switch here between the timed race and training sessions."],
+["Burpees, fentes et wall balls pour travailler le muscle et le souffle.","Burpees, lunges and wall balls to build muscle and endurance."],
+["Le format officiel : 8 × (1 km + station). Vise ton allure d’objectif.","The official format: 8 × (1 km + station). Aim for your target pace."],
+["séance(s) planifiée(s) jusqu’au jour J, visibles dans le calendrier.","session(s) scheduled until race day, visible in the calendar."],
+["Aucun évènement pour l’instant : ajoute-en un depuis la recherche.","No event yet: add one from the search."],
+["Donne un nom, coche au moins une station et choisis 1 à 10 tours.","Enter a name, tick at least one station and choose 1 to 10 rounds."],
+["Renseigne un nom, une date, 1 à 10 tours et au moins une station.","Enter a name, a date, 1 to 10 rounds and at least one station."],
+["Le trait noir marque ton temps objectif pour chaque segment.","The black line marks your target time for each segment."],
+["Aucune donnée : lance une course ou renseigne un objectif.","No data: start a race or enter a target."],
+["Termine une course ou une séance pour voir tes moyennes.","Finish a race or a session to see your averages."],
+["Enchaînements SkiErg et rameur avec une course courte.","SkiErg and rowing sets with a short run."],
+["Garder l’écran allumé pendant une course ou une séance","Keep the screen on during a race or session"],
+["Il sert à présélectionner ta catégorie et les charges.","It is used to preselect your category and loads."],
+["Aucun pour l’instant : touche + pour créer le tien.","None yet: tap + to create yours."],
+["Touche-le à tout moment pour modifier ton profil.","Tap it any time to edit your profile."],
+["Aucun résultat : ajoute-le à la main ci-dessous.","No result: add it manually below."],
+["La date est trop proche pour créer un programme.","The date is too close to create a program."],
+["Confirmer la suppression de tout l’historique ?","Confirm deleting the whole history?"],
+["16 segments : 8 × (1 km de course + 1 station)","16 segments: 8 × (1 km run + 1 station)"],
+["Premier jour de la semaine (calendrier)","First day of the week (calendar)"],
+["Traduction partielle : menus et paramètres.","Language of the whole app."],
+["Supprimer mon compte et toutes mes données","Delete my account and all my data"],
+["Touche un chiffre pour noter ta séance","Tap a number to rate your session"],
+["Revoir le guide de l’application","Replay the app guide"],
+["Moyennes (courses / entraînements)","Averages (races / workouts)"],
+["Distances, répétitions et charges","Distances, reps and loads"],
+["Vibration à chaque étape terminée","Vibrate when a step is done"],
+["Renseigne ton nom et ton prénom.","Enter your last name and first name."],
+["Volume par rapport à la course","Volume relative to the race"],
+["Course avant chaque station","Run before each station"],
+["Allure course à pied","Running pace"],
+["Renseigne un nom et une date.","Enter a name and a date."],
+["Toucher pour voir le détail ▾","Tap to see details ▾"],
+["Date de ta course (jour J)","Date of your race (race day)"],
+["+ Ajouter une séance ce jour","+ Add a session this day"],
+["Ajouter un évènement perso ▾","Add a custom event ▾"],
+["Confirmer la remise à zéro ?","Confirm the reset?"],
+["Renseigne un temps objectif.","Enter a target time."],
+["Confirmer la suppression ?","Confirm deletion?"],
+["Course en cours / dernière","Current / last race"],
+["Remise à zéro de l’épreuve","Reset the race"],
+["Tu es prêt : bonne séance.","You are ready: have a great session."],
+["Rien de prévu ce jour-là.","Nothing planned that day."],
+["Simulation Hyrox complète","Full Hyrox simulation"],
+["Lancer l’entraînement","Start the workout"],
+["Supprimer l’évènement","Delete the event"],
+["Activation avant épreuve","Pre-race activation"],
+["Annuler le dernier split","Undo the last split"],
+["Temps objectif (minutes)","Target time (minutes)"],
+["Initiation · 4 stations","Intro · 4 stations"],
+["Rechercher un évènement","Search for an event"],
+["Temps moyen par atelier","Average time per station"],
+["Supprimer la séance","Delete the session"],
+["Course et Entraînement","Race and Training"],
+["HYROX Paris (décembre)","HYROX Paris (December)"],
+["Sauvegarde des données","Data backup"],
+["Supprimer le programme","Delete the program"],
+["Séances d’entraînement","Training sessions"],
+["Séances par semaine","Sessions per week"],
+["Automatique (système)","Automatic (system)"],
+["Créer un entraînement","Create a workout"],
+["Effort perçu (1 à 10)","Perceived effort (1 to 10)"],
+["Supprimer ce résultat","Delete this result"],
+["Ton nom et ton prénom","Your last and first name"],
+["Ajouter un évènement","Add an event"],
+["Endurance des jambes","Leg endurance"],
+["Semaine de l’épreuve","Race week"],
+["Séances enregistrées","Saved sessions"],
+["Affichage du chrono","Timer display"],
+["Catégorie et chrono","Category and timer"],
+["Nouvel entraînement","New workout"],
+["Voir le programme (","See the program ("],
+["Choisis ta taille.","Choose your height."],
+["Choisis ton avatar","Choose your avatar"],
+["Choisis ton genre.","Choose your gender."],
+["Choisis ton poids.","Choose your weight."],
+["Données importées.","Data imported."],
+["Importer une photo","Import a photo"],
+["Modifier la séance","Edit the session"],
+["Première ouverture","First launch"],
+["Stations à inclure","Stations to include"],
+["Données affichées","Data shown"],
+["Mes entraînements","My workouts"],
+["Quitter la séance","Leave the session"],
+["Séance terminée !","Session finished!"],
+["Tes entraînements","Your workouts"],
+["Choisis ton âge.","Choose your age."],
+["Endurance course","Running endurance"],
+["Garde ton allure","Keep your pace"],
+["Mon entraînement","My workout"],
+["Course + SkiErg","Run + SkiErg"],
+["Crée ton profil","Create your profile"],
+["Entraînements (","Workouts ("],
+["Lance ta course","Start your race"],
+["Nombre de tours","Number of rounds"],
+["Nouvelle course","New race"],
+["Nouvelle séance","New session"],
+["Segment terminé","Segment done"],
+["Course à pied","Running"],
+["course à pied","running"],
+["Effort perçu :","Perceived effort:"],
+["Mois précédent","Previous month"],
+["Mois suivant","Next month"],
+["Étape terminée","Step done"],
+["Temps final :","Final time:"],
+["Temps total :","Total time:"],
+["Très très dur","Very very hard"],
+["Presque maximal","Almost maximal"],
+["Durée totale","Total duration"],
+["Séance faite","Session done"],
+["Très facile","Very easy"],
+["⏱ Numérique","⏱ Digital"],
+["🕒 Analogique","🕒 Analog"],
+["Semaine du","Week of"],
+["Spécifique","Specific"],
+["Ton avatar","Your avatar"],
+["Ton profil","Your profile"],
+["séances) ▾","sessions) ▾"],
+["États-Unis","United States"],
+["Régénérer","Regenerate"],
+["Déroulé :","Outline:"],
+["À répéter","Repeat"],
+["Évènement","Event"],
+["évènements","events"],
+["évènement","event"],
+["Affûtage","Taper"],
+["Ajouté ✓","Added ✓"],
+["Démarrer","Start"],
+["Français","French"],
+["Très dur","Very hard"],
+["À propos","About"],
+["Terminé !","Finished!"],
+["Terminé","Finished"],
+["Ton âge","Your age"],
+["Prêt ?","Ready?"],
+["Prénom","First name"],
+["Prévue","Planned"],
+["Course 1","Run 1"],["Course 2","Run 2"],["Course 3","Run 3"],["Course 4","Run 4"],["Course 5","Run 5"],["Course 6","Run 6"],["Course 7","Run 7"],["Course 8","Run 8"],
+["Courses (","Races ("],
+["Entraînements","Workouts"],
+["Entraînement","Training"],
+["entraînements","workouts"],
+["entraînement","workout"],
+["Paramètres","Settings"],
+["Calendrier","Calendar"],
+["Historique","History"],
+["Graphe","Chart"],
+["Objectif","Target"],
+["Analyse","Analysis"],
+["Profil","Profile"],
+["Annuler","Cancel"],
+["Supprimer","Delete"],
+["Enregistrer","Save"],
+["Importer","Import"],
+["Exporter","Export"],
+["Modifier","Edit"],
+["Lancer","Start"],
+["Terminer","Finish"],
+["Suivant","Next"],
+["Retour","Back"],
+["Passer","Skip"],
+["Fermer","Close"],
+["Ajouter","Add"],
+["Créer","Create"],
+["Voir","View"],
+["Suggestions","Suggestions"],
+["Homme","Men"],
+["Femme","Women"],
+["Mixte","Mixed"],
+["Relais","Relay"],
+["Simple","Singles"],
+["Double","Doubles"],
+["Genre","Gender"],
+["Âge","Age"],
+["Taille","Height"],
+["Poids","Weight"],
+["Nom","Last name"],
+["Aucune","None"],
+["Auto","Auto"],
+["Manuel","Manual"],
+["Unités","Units"],
+["Unité","Unit"],
+["Masse","Weight"],
+["Thème","Theme"],
+["Langue","Language"],
+["Clair","Light"],
+["Sombre","Dark"],
+["Couleur d’accentuation","Accent color"],
+["Jaune","Yellow"],["Bleu","Blue"],["Orange","Orange"],["Rouge","Red"],["Vert","Green"],["Violet","Purple"],["Rose","Pink"],["Marron","Brown"],
+["Lundi","Monday"],["Dimanche","Sunday"],
+["Compte","Account"],
+["Stations","Stations"],
+["Ateliers","Stations"],
+["ateliers","stations"],
+["atelier","station"],
+["Salut","Hi"],
+["Bienvenue sur","Welcome to"],
+["C’est parti ! 💪","Let’s go! 💪"],
+["C’est parti","Let’s go"],
+["Étape","Step"],
+["étapes","steps"],
+["Tour","Round"],
+["tours","rounds"],
+["tour","round"],
+["Date","Date"],
+["Total","Total"],
+["Très facile","Very easy"],
+["Facile","Easy"],
+["Léger","Light"],
+["Modéré","Moderate"],
+["Soutenu","Sustained"],
+["Dur","Hard"],
+["Maximal","Maximal"],
+["Récupération","Recovery"],
+["Endurance","Endurance"],
+["Seuil","Threshold"],
+["Demi-Hyrox","Half Hyrox"],
+["Machines & cardio","Machines & cardio"],
+["Force & traineaux","Strength & sleds"],
+["Espagne","Spain"],["Italie","Italy"],["Pays-Bas","Netherlands"],
+["janvier","January"],["février","February"],["mars","March"],["avril","April"],["mai","May"],["juin","June"],["juillet","July"],["août","August"],["septembre","September"],["octobre","October"],["novembre","November"],["décembre","December"],
+["lun.","Mon"],["mar.","Tue"],["mer.","Wed"],["jeu.","Thu"],["ven.","Fri"],["sam.","Sat"],["dim.","Sun"],
+["Jour J","Race day"],
+["cumul","cumulative"],
+[" ans"," yrs"],
+["Base","Base"],
+["séance(s)","session(s)"],
+["séances","sessions"],
+["séance","session"],
+["Séances","Sessions"],
+["Séance","Session"],
+["programme","program"],
+["Programme","Program"],
+["objectif","target"],
+["fois :","times:"],
+["au total","in total"],
+["à deux","in pairs"],
+["relais","relay"],
+["· course","· run"],
+["Course","Run"],
+["course","run"],
+["Records en entraînement","Workout records"],
+["Records","Records"],
+["Temps total","Total time"],
+["Meilleur km de course","Best run km"],
+["Dernière course","Last race"],
+["Meilleur temps par atelier (le volume peut varier d’une séance à l’autre).","Best time per station (volume may vary between sessions)."],
+["Aucune séance enregistrée.","No session recorded."],
+["Termine une course pour établir tes premiers records.","Finish a race to set your first records."],
+["🏁 Premiers temps de référence enregistrés pour cette catégorie.","🏁 First reference times recorded for this category."],
+["nouveaux records","new records"],["Nouveau record","New record"],["ancien","previous"],
+["Course à pied (1 km)","Running (1 km)"],
+["Charge d’entraînement","Training load"],
+["Charge par semaine (8 dernières semaines)","Load per week (last 8 weeks)"],
+["Charge = effort perçu × durée en minutes (unités arbitraires, UA).","Load = perceived effort × duration in minutes (arbitrary units, AU)."],
+["Moyenne des 4 semaines précédentes","Average of the previous 4 weeks"],
+["7 derniers jours","Last 7 days"],
+["Rapport","Ratio"],
+[" UA"," AU"],
+["séance(s) sans effort perçu ignorée(s).","session(s) without perceived effort ignored."],
+["Données insuffisantes","Not enough data"],
+["Charge faible","Low load"],
+["Équilibrée","Balanced"],
+["Surcharge","Overload"],
+["Attention","Warning"],
+["Voir la charge","View the load"],
+["Pas assez de données : enregistre quelques semaines de séances avec un effort perçu.","Not enough data: log a few weeks of sessions with a perceived effort."],
+["Ta charge des 7 derniers jours dépasse nettement ta moyenne. Prévois de l’allègement ou du repos.","Your load over the last 7 days is well above your average. Plan some lighter work or rest."],
+["Ta charge augmente vite. Surveille ta fatigue et garde des jours de récupération.","Your load is rising fast. Watch your fatigue and keep recovery days."],
+["Semaine plus légère que d’habitude. Si tu te sens en forme, tu peux ajouter une séance.","A lighter week than usual. If you feel good, you can add a session."],
+["Charge équilibrée : continue comme ça.","Balanced load: keep it up."],
+["Adapter selon mes résultats","Adapt to my results"],
+["Pas assez de données pour adapter le programme.","Not enough data to adapt the program."],
+["Charge équilibrée : aucun ajustement nécessaire.","Balanced load: no adjustment needed."],
+["séance(s) allégée(s) (−25 % de volume)","session(s) lightened (−25 % volume)"],
+["séance(s) renforcée(s) (+25 % de volume)","session(s) increased (+25 % volume)"],
+["sur les 2 prochaines semaines.","over the next 2 weeks."],
+["Aucune séance à ajuster dans les 2 prochaines semaines.","No session to adjust in the next 2 weeks."],
+["Repères personnalisés","Personal benchmarks"],
+["Estimations indicatives, à adapter avec un professionnel de santé ou un coach.","Indicative estimates, to be adapted with a health professional or a coach."],
+["FC max estimée","Estimated max HR"],
+["Dépense énergétique estimée","Estimated energy expenditure"],
+["⛶ Mode course plein écran","⛶ Full-screen race mode"],
+["Terminer la course","Finish the race"],
+[" vs objectif"," vs target"],
+["temps final ","final time "],
+["arrivée estimée ","estimated finish "],
+["(objectif ","(target "],
+["Équipe relais","Relay team"],
+["Nomme tes 4 athlètes et répartis les segments.","Name your 4 athletes and assign the segments."],
+["Répartition des segments ▾","Segment assignment ▾"],
+["Athlète","Athlete"],
+["Installer l’application","Install the app"],
+["Ajoute Hyrox Coach à ton écran d’accueil pour l’ouvrir comme une vraie application, même sans connexion.","Add Hyrox Coach to your home screen to open it like a real app, even offline."],
+["Installer sur l’écran d’accueil","Install on the home screen"],
+["Le mode hors ligne est actif dans la version installable (fichiers hébergés en HTTPS).","Offline mode is active in the installable version (files hosted over HTTPS)."],
+["✓ Mode hors ligne actif : l’application s’ouvre sans connexion.","✓ Offline mode active: the app opens without a connection."],
+["Android (Chrome) : menu ⋮ puis Installer l’application. iPhone (Safari) : Partager puis Sur l’écran d’accueil. Ordinateur : icône d’installation dans la barre d’adresse.","Android (Chrome): ⋮ menu then Install app. iPhone (Safari): Share then Add to Home Screen. Desktop: install icon in the address bar."],
+["Hyrox Coach · les données restent sur cet appareil.","Hyrox Coach · your data stays on this device."],
+["Pas assez de recul (moins de 2 semaines de données) : continue le programme.","Not enough history (less than 2 weeks of data): keep following the program."],
+["Volume = part des distances et des répétitions de la course officielle. Exemple à 50 % : 500 m de SkiErg au lieu de 1000 m, 50 wall balls au lieu de 100.","Volume = share of the distances and reps of the official race. Example at 50 %: 500 m of SkiErg instead of 1000 m, 50 wall balls instead of 100."],
+["Volume = part des distances et des répétitions de la course officielle. À 50 % : 500 m de SkiErg au lieu de 1000 m, 50 wall balls au lieu de 100.","Volume = share of the distances and reps of the official race. At 50 %: 500 m of SkiErg instead of 1000 m, 50 wall balls instead of 100."],
+[" le programme"," the program"],
+["Rechercher","Search"],
+["Épreuve","Race"],
+["Évènement","Event"],
+["Tu es prêt","You are ready"],
+["Allure","Pace"],
+["Volume","Volume"],
+["Stations","Stations"],
+["Suivi en direct et plein écran","Live tracking and full screen"],
+["Pendant la course, vois ton écart avec l’objectif et ton arrivée estimée. Le mode plein écran affiche un gros chrono et un gros bouton, pratique avec des gants.","During the race, see your gap to the target and your estimated finish. Full-screen mode shows a big timer and a big button, handy with gloves."],
+["Le programme peut s’adapter à tes résultats.","The program can adapt to your results."],
+["Graphes, historique, records personnels et charge d’entraînement : tout pour suivre ta progression.","Charts, history, personal records and training load: everything to track your progress."],
+["Ta fréquence cardiaque max estimée, tes zones d’effort et ta dépense énergétique, calculées avec ton profil.","Your estimated max heart rate, effort zones and energy expenditure, calculated from your profile."],
+["Tu peux aussi installer l’application pour l’utiliser hors ligne.","You can also install the app to use it offline."],
+["Mode course","Race mode"],
+["Hyrox Coach","Hyrox Coach"]
+];
+/* ===== v2 : records, charge, adaptation, direct, plein écran, repères, relais, allure, hors ligne, traduction ===== */
+var DEFP=null;window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();DEFP=e});
+function defRly(){var a=[],i;for(i=0;i<16;i++)a.push(Math.floor(i/4));return {names:["Athlète 1","Athlète 2","Athlète 3","Athlète 4"],asg:a}}
+var RLY=defRly();try{var r0=JSON.parse(localStorage.getItem("hyroxR")||"null");if(r0&&r0.names&&r0.asg&&r0.asg.length==16)RLY=r0}catch(e){}
+function an(i){return RLY.names[RLY.asg[i]]||("Athlète "+(RLY.asg[i]+1))}
+function segLine(i){var s=SEG[i];return (wd(s)||"Garde ton allure")+(CATR[$("cat").value]?" · 👤 "+an(i):"")}
+function relayR(){var el=$("relay"),on=!!CATR[$("cat").value];el.classList.toggle("hide",!on);if(!on)return;
+var h='<b>Équipe relais</b><p class="mu" style="margin:4px 0 8px">Nomme tes 4 athlètes et répartis les segments.</p><div class="row" style="gap:6px;flex-wrap:wrap">';
+RLY.names.forEach(function(n,k){h+='<input class="ti" style="flex:1 1 45%;width:auto;text-align:left" maxlength="16" value="'+esc(n)+'" onchange="rlyName('+k+',this.value)" aria-label="Athlète '+(k+1)+'">'});
+h+='</div><details style="margin-top:8px"><summary class="mu">Répartition des segments ▾</summary>';
+SEG.forEach(function(s,i){h+='<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)"><span>'+s.n+'</span><select style="width:auto" onchange="rlyAsg('+i+',this.value)">'+RLY.names.map(function(n,k){return '<option value="'+k+'"'+(RLY.asg[i]==k?" selected":"")+'>'+esc(n)+'</option>'}).join("")+'</select></div>'});
+el.innerHTML=h+'</details>'}
+function rlyName(k,v){RLY.names[k]=v.trim()||("Athlète "+(k+1));sv("hyroxR",RLY);relayR();refresh()}
+function rlyAsg(i,v){RLY.asg[i]=+v;sv("hyroxR",RLY);refresh()}
+function teamH(r){var t=[0,0,0,0];r.sp.forEach(function(v,i){var k=r.team.asg[i];t[k]=(t[k]||0)+(v-(i?r.sp[i-1]:0))});
+return '<div class="mu">'+t.map(function(v,k){return v?esc(r.team.names[k]||"")+" "+fmt(v):""}).filter(Boolean).join(" · ")+'</div>'}
+var PCK=270;
+function pmi(){return CFG.du!="m"}
+function pdisp(sk){return fs(pmi()?sk*1.609344:sk)+" /"+(pmi()?"mi":"km")}
+function pcUpd(){$("pcl").textContent="Allure course à pied (min/"+(pmi()?"mi":"km")+")";$("pc").value=fs(PCK*(pmi()?1.609344:1))}
+function pcIn(){PCK=ps($("pc").value)/(pmi()?1.609344:1);plan()}
+function manTot(){var s=0;MAN.forEach(function(v){s+=v||0});return s}
+function liveUpd(e){var el=$("live"),TT=targets(),d=cum.length;
+if(!TT||(!run&&!d)){el.classList.add("hide");return}
+var fin=!run&&d==16,tgd=0,tot=0,i;for(i=0;i<d;i++)tgd+=TT[i];TT.forEach(function(v){tot+=v});
+var sec=e/1000,g=d?cum[d-1]/1000-tgd:0,seg=d?sec-cum[d-1]/1000:sec,cur=d<16?TT[d]:0,over=(run&&d<16&&seg>cur)?seg-cur:0,gap=fin?g:g+over,proj=(d&&tgd)?tot*(cum[d-1]/1000)/tgd:null;
+if(fin)proj=cum[15]/1000;
+el.innerHTML='<span class="'+(gap<=0?"ok":"ko")+'"><b>'+(gap<=0?"−":"+")+fs(Math.abs(gap))+'</b> vs objectif</span>'+(proj!=null?' · '+(fin?"temps final ":"arrivée estimée ")+'<b>'+fs(proj)+'</b> (objectif '+fs(tot)+')':'');
+el.classList.remove("hide")}
+function rmOpen(){$("rm").classList.remove("hide");var w=CFG.wake;CFG.wake=true;if(run)wkOn();CFG.wake=w;rmUpd()}
+function rmClose(){$("rm").classList.add("hide")}
+function rmNext(){if(!run&&cum.length==16){rmClose();return}next();rmUpd()}
+function rmUndo(){undo();rmUpd()}
+function rmUpd(e){var o=$("rm");if(!o||o.classList.contains("hide"))return;var d=cum.length,fin=!run&&d==16,ms=e!=null?e:(run?Date.now()-t0:(d?cum[d-1]:0));
+$("rmc").textContent=fmt(ms);
+$("rms").textContent=fin?"Terminé !":(run&&d<16?SEG[d].n:"Prêt ?");
+$("rmd").textContent=fin?"Temps final : "+fmt(cum[15]):(run&&d<16?segLine(d):"");
+$("rmb").textContent=fin?"Fermer":(!run?"Démarrer":(d==15?"Terminer la course":"Segment terminé"));
+$("rml").innerHTML=$("live").classList.contains("hide")?"":$("live").innerHTML}
+function ccat(c){return c=="h"?"hs":(c=="f"?"fs":c)}
+function segs(r){var a=r.sp.map(function(x,i){return (x-(i?r.sp[i-1]:0))/1000});a.push(r.tot/1000);return a}
+function bestRun(a){var m=null,i;for(i=0;i<16;i+=2)if(a[i]!=null&&(m==null||a[i]<m))m=a[i];return m}
+function recBest(cat,skip){var b=[],w=[],i;for(i=0;i<17;i++){b.push(null);w.push(-1)}
+H.forEach(function(r,j){if(j==skip||ccat(r.cat)!=cat||!r.sp||r.sp.length<16)return;segs(r).forEach(function(v,i){if(b[i]==null||v<b[i]){b[i]=v;w[i]=j}})});
+return {b:b,w:w}}
+function showRec(){var r=H[0],el=$("recR");if(!r||!r.sp||r.sp.length<16){el.classList.add("hide");return}
+var cat=ccat(r.cat),B=recBest(cat,0),n=segs(r),m=[],first=true,k;
+B.b.forEach(function(v){if(v!=null)first=false});
+if(first){el.innerHTML='<div class="card" style="margin-top:10px">🏁 Premiers temps de référence enregistrés pour cette catégorie.</div>';el.classList.remove("hide");return}
+if(B.b[16]!=null&&n[16]<B.b[16])m.push("Temps total : "+fmt(r.tot)+" (ancien "+fs(B.b[16])+")");
+for(k=0;k<8;k++){var i=2*k+1;if(B.b[i]!=null&&n[i]<B.b[i])m.push(ST[k][0]+" : "+fs(n[i])+" (ancien "+fs(B.b[i])+")")}
+var br=bestRun(n),pr=bestRun(B.b);if(pr!=null&&br<pr)m.push("Course à pied (1 km) : "+fs(br)+" (ancien "+fs(pr)+")");
+el.innerHTML=m.length?'<div class="card" style="margin-top:10px"><b>🏆 '+(m.length>1?m.length+" nouveaux records":"Nouveau record")+'</b>'+m.map(function(x){return '<div class="mu">'+x+'</div>'}).join("")+'</div>':"";
+el.classList.toggle("hide",!m.length)}
+var RCAT=null;
+function recPage(){var el=$("recp"),cats=[];H.forEach(function(r){var c=ccat(r.cat);if(r.sp&&r.sp.length==16&&cats.indexOf(c)<0)cats.push(c)});
+var h='<b>Records</b>';
+if(!cats.length){h+='<p class="mu">Termine une course pour établir tes premiers records.</p>'}
+else{var cur=$("cat").value;if(!RCAT||cats.indexOf(RCAT)<0)RCAT=cats.indexOf(cur)>-1?cur:cats[0];
+var B=recBest(RCAT,-1),last=-1;H.forEach(function(r,j){if(last<0&&ccat(r.cat)==RCAT&&r.sp.length==16)last=j});
+var ls=segs(H[last]),rr=null,rd="",rl=bestRun(ls);
+H.forEach(function(r){if(ccat(r.cat)!=RCAT||r.sp.length!=16)return;var v=bestRun(segs(r));if(rr==null||v<rr){rr=v;rd=r.d}});
+h+='<select id="rcat" onchange="RCAT=this.value;recPage()" style="margin:8px 0">'+oo(cats.map(function(c){return [c,CATN[c]||c]}),RCAT)+'</select>';
+function row(name,rv,date,lv){var hold=lv!=null&&Math.abs(lv-rv)<0.001;
+return '<div class="row" style="padding:7px 0;border-top:1px solid var(--bd)"><div><b>'+name+'</b><div class="mu">'+date+'</div></div><div style="text-align:right"><div class="t">'+(hold?"🏆 ":"")+fs(rv)+'</div><div class="mu">Dernière course : '+fs(lv)+(hold?"":" ("+(lv>rv?"+":"−")+fs(Math.abs(lv-rv))+")")+'</div></div></div>'}
+h+=row("Temps total",B.b[16],H[B.w[16]].d,ls[16]);
+h+=row("Meilleur km de course",rr,rd,rl);
+for(var k=0;k<8;k++){var i=2*k+1;h+=row(ST[k][0],B.b[i],H[B.w[i]].d,ls[i])}}
+var tb={};SL.forEach(function(r){var p=0;r.sp.forEach(function(s){var d=(s.c-p)/1000;p=s.c;if(s.n!="Course"&&(tb[s.n]==null||d<tb[s.n].v))tb[s.n]={v:d,d:r.d,x:s.d}})});
+h+='<p class="mu" style="margin-top:14px"><b>Records en entraînement</b></p>';
+var any=false;ST.forEach(function(s){var t=tb[s[0]];if(!t)return;any=true;h+='<div class="row" style="padding:7px 0;border-top:1px solid var(--bd)"><div><b>'+s[0]+'</b><div class="mu">'+t.d+' · '+cv(t.x)+'</div></div><div class="t">'+fs(t.v)+'</div></div>'});
+h+=any?'<p class="mu">Meilleur temps par atelier (le volume peut varier d’une séance à l’autre).</p>':'<p class="mu">Aucune séance enregistrée.</p>';
+el.innerHTML=h}
+function mon(k){return addD(k,-((pdt(k).getDay()+6)%7))}
+function ents(){var a=[];H.forEach(function(r){var k=fk(r.d);if(k)a.push({k:k,u:r.rpe?r.rpe*r.tot/60000:null})});SL.forEach(function(r){var k=fk(r.d);if(k)a.push({k:k,u:r.rpe?r.rpe*r.tot/60000:null})});return a}
+function loadStatus(){var a=ents(),t=td(),ac=0,ch=0,earlier=0,miss=0,res;
+a.forEach(function(e){if(e.u==null){miss++;return}var d=dd(e.k,t);if(d>=0&&d<=6)ac+=e.u;else if(d>=7&&d<=34){ch+=e.u;earlier++}});
+res={ac:ac,ch:ch/4,miss:miss,ratio:null,level:"none",msg:"Pas assez de données : enregistre quelques semaines de séances avec un effort perçu."};
+if(!earlier)return res;
+res.ratio=ac/res.ch;
+if(res.ratio>1.5){res.level="high";res.msg="Ta charge des 7 derniers jours dépasse nettement ta moyenne. Prévois de l’allègement ou du repos."}
+else if(res.ratio>1.3){res.level="warn";res.msg="Ta charge augmente vite. Surveille ta fatigue et garde des jours de récupération."}
+else if(res.ratio<0.8){res.level="low";res.msg="Semaine plus légère que d’habitude. Si tu te sens en forme, tu peux ajouter une séance."}
+else{res.level="ok";res.msg="Charge équilibrée : continue comme ça."}
+return res}
+var LVC={high:"var(--ko)",warn:"#f59e0b",ok:"var(--ok)",low:"var(--run)",none:"var(--mu)"},LVT={high:"Surcharge",warn:"Attention",ok:"Équilibrée",low:"Charge faible",none:"Données insuffisantes"};
+function loadAlert(){var S=loadStatus(),el=$("alrt");
+if(S.level=="high"||S.level=="warn"||S.level=="low"){el.innerHTML='<b style="color:'+LVC[S.level]+'">'+LVT[S.level]+'</b><div class="mu" style="margin:4px 0 8px">'+S.msg+'</div><button class="btn s" style="margin:0" onclick="tab(10)">Voir la charge</button>';el.style.borderColor=LVC[S.level];el.classList.remove("hide")}
+else el.classList.add("hide")}
+function recentRpe(n){var a=[];H.forEach(function(r){if(r.rpe)a.push({k:fk(r.d),v:r.rpe})});SL.forEach(function(r){if(r.rpe)a.push({k:fk(r.d),v:r.rpe})});
+a.sort(function(x,y){return x.k<y.k?1:(x.k>y.k?-1:0)});a=a.slice(0,n);if(!a.length)return null;var s=0;a.forEach(function(e){s+=e.v});return s/a.length}
+function loadPage(){var el=$("ldp"),S=loadStatus(),a=ents(),m0=mon(td()),W=[],i,mx=0;
+for(i=7;i>=0;i--)W.push({k:addD(m0,-7*i),u:0});
+a.forEach(function(e){if(e.u==null)return;var w=mon(e.k);W.forEach(function(x){if(x.k==w)x.u+=e.u})});
+W.forEach(function(x){if(x.u>mx)mx=x.u});mx=mx||1;
+var svg='<svg viewBox="0 0 360 170" width="100%" role="img" aria-label="Charge par semaine" style="display:block;font-size:10px"><line x1="10" x2="350" y1="130" y2="130" style="stroke:var(--tx)"/>';
+W.forEach(function(x,j){var bh=Math.round(x.u/mx*105),bx=14+j*43;svg+='<rect x="'+bx+'" y="'+(130-bh)+'" width="30" height="'+bh+'" rx="4" style="fill:'+(j==7?"var(--ac)":"var(--run)")+'"/><text x="'+(bx+15)+'" y="'+(126-bh)+'" text-anchor="middle" style="fill:var(--tx)">'+(x.u?Math.round(x.u):"")+'</text><text x="'+(bx+15)+'" y="146" text-anchor="middle" style="fill:var(--mu)">'+fdate(x.k).slice(0,5)+'</text>'});
+svg+='</svg>';
+var h='<div class="card"><b>Charge d’entraînement</b><p class="mu" style="margin:4px 0 8px">Charge par semaine (8 dernières semaines)</p>'+svg+'<p class="mu">Charge = effort perçu × durée en minutes (unités arbitraires, UA).</p></div>';
+h+='<div class="card"><b style="color:'+LVC[S.level]+'">'+LVT[S.level]+'</b><div class="mu" style="margin:4px 0 8px">'+S.msg+'</div>'+
+'<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)"><span>7 derniers jours</span><span class="t">'+Math.round(S.ac)+' UA</span></div>'+
+'<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)"><span>Moyenne des 4 semaines précédentes</span><span class="t">'+Math.round(S.ch)+' UA</span></div>'+
+(S.ratio!=null?'<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)"><span>Rapport</span><span class="t">'+S.ratio.toFixed(2)+'</span></div>':'')+
+(S.miss?'<p class="mu">'+S.miss+' séance(s) sans effort perçu ignorée(s).</p>':'')+'</div>';
+el.innerHTML=h}
+function adapt(i){var e=EVL[i],S=loadStatus(),rp=recentRpe(3),pm=$("pm"+i),d=0,t1=td(),lim=addD(t1,14),n=0;
+if(S.ratio==null&&rp==null){pm.textContent="Pas assez de données pour adapter le programme.";return}
+if((S.ratio!=null&&S.ratio>1.3)||(rp!=null&&rp>=8.5))d=-0.25;
+else if((S.ratio==null||S.ratio<0.8)&&rp!=null&&rp<=5)d=0.25;
+if(!d){pm.textContent=S.ratio==null?"Pas assez de recul (moins de 2 semaines de données) : continue le programme.":"Charge équilibrée : aucun ajustement nécessaire.";return}
+PL.forEach(function(p){if(p.ev!=e.id||p.date<=t1||p.date>lim||p.ph=="Affûtage"||p.ph=="Semaine de l’épreuve")return;var f=Math.max(0.25,Math.min(1,Math.round((p.w.f+d)*4)/4));if(f!=p.w.f){p.w.f=f;p.w.ov={};n++}});
+sv("hyroxPL",PL);evt();var q=$("pm"+i);if(q)q.textContent=n?(n+(d<0?" séance(s) allégée(s) (−25 % de volume)":" séance(s) renforcée(s) (+25 % de volume)")+" sur les 2 prochaines semaines."):"Aucune séance à ajuster dans les 2 prochaines semaines."}
+var ZN=[[50,60,"Récupération"],[60,70,"Endurance"],[70,80,"Tempo"],[80,90,"Seuil"],[90,100,"Maximal"]];
+function repR(){var el=$("rep");if(!P){el.innerHTML="";return}
+var fm=Math.round(208-0.7*P.a),t=MODE=="man"?manTot():(parseFloat($("tg").value)||0)*60,
+h='<b>Repères personnalisés</b><p class="mu" style="margin:4px 0 8px">Estimations indicatives, à adapter avec un professionnel de santé ou un coach.</p><div class="row"><span>FC max estimée</span><span class="t">'+fm+' bpm</span></div>';
+ZN.forEach(function(z,i){h+='<div class="row" style="padding:5px 0;border-top:1px solid var(--bd)"><span>Z'+(i+1)+' · '+z[2]+'</span><span class="t">'+Math.round(fm*z[0]/100)+'–'+Math.round(fm*z[1]/100)+' bpm</span></div>'});
+if(t>0)h+='<div class="row" style="padding-top:8px"><span>Dépense énergétique estimée</span><span class="t">≈ '+Math.round(10*P.w*t/3600)+' kcal</span></div>';
+el.innerHTML=h}
+function offStatus(){return (navigator.serviceWorker&&navigator.serviceWorker.controller)?"✓ Mode hors ligne actif : l’application s’ouvre sans connexion.":"Le mode hors ligne est actif dans la version installable (fichiers hébergés en HTTPS)."}
+function instApp(){var o=$("offs");if(DEFP){DEFP.prompt();return}
+o.textContent="Android (Chrome) : menu ⋮ puis Installer l’application. iPhone (Safari) : Partager puis Sur l’écran d’accueil. Ordinateur : icône d’installation dans la barre d’adresse."}
+Object.assign(I18.fr,{records:"Records",load:"Charge",s_inst:"Installer l’application",s_instn:"Ajoute Hyrox Coach à ton écran d’accueil pour l’ouvrir comme une vraie application, même sans connexion.",s_instb:"Installer sur l’écran d’accueil"});
+Object.assign(I18.en,{records:"Records",load:"Load",s_inst:"Install the app",s_instn:"Add Hyrox Coach to your home screen to open it like a real app, even offline.",s_instb:"Install on the home screen"});
+var ENS=null,TRC={},TRO=null;
+function rplB(o,k,t){var r="",i=0,j,L=k.length,a=/[A-Za-zÀ-ÿ]/,bs=a.test(k.charAt(0)),be=a.test(k.charAt(L-1));
+while((j=o.indexOf(k,i))>-1){var b1=!bs||j==0||!a.test(o.charAt(j-1)),b2=!be||j+L>=o.length||!a.test(o.charAt(j+L));
+if(b1&&b2){r+=o.slice(i,j)+t;i=j+L}else{r+=o.slice(i,j+1);i=j+1}}return r+o.slice(i)}
+function trs(s){if(CFG.lang!="en")return s;if(TRC[s]!=null)return TRC[s];
+if(!ENS){ENS=EN.slice().sort(function(a,b){return b[0].length-a[0].length})}
+var o=s,i,V=[];for(i=0;i<ENS.length;i++){if(o.indexOf(ENS[i][0])>-1){var q=rplB(o,ENS[i][0],"\uE000"+V.length+"\uE001");if(q!==o){V.push(ENS[i][1]);o=q}}}
+o=o.replace(/\uE000(\d+)\uE001/g,function(m,k){return V[+k]});
+TRC[s]=o;return o}
+var TRA=["placeholder","aria-label","title","label"];
+function trNode(n){var d=n.data;
+if(CFG.lang=="en"){if(n.__en===d)return;if(!/[A-Za-zÀ-ÿ]/.test(d))return;var t=trs(d);if(t!==d){n.__fr=d;n.__en=t;n.data=t}}
+else if(n.__en!=null){if(n.data===n.__en)n.data=n.__fr;n.__en=null;n.__fr=null}}
+function trEl(e){if(!e.getAttribute)return;TRA.forEach(function(a){var v=e.getAttribute(a);if(v==null)return;var k="__a_"+a;
+if(CFG.lang=="en"){var o=(e[k]!=null&&trs(e[k])===v)?e[k]:v;e[k]=o;var t=trs(o);if(t!==v)e.setAttribute(a,t)}
+else if(e[k]!=null){e.setAttribute(a,e[k]);e[k]=null}})}
+function trTree(n){if(n.nodeType==3){trNode(n);return}if(n.nodeType!=1)return;trEl(n);var w=document.createTreeWalker(n,5,null),c;while(c=w.nextNode()){if(c.nodeType==3)trNode(c);else trEl(c)}}
+function trAll(){trTree(document.body)}
+function trInit(){if(!window.MutationObserver)return;TRO=new MutationObserver(function(ms){ms.forEach(function(m){if(m.type=="characterData")trNode(m.target);else m.addedNodes.forEach(trTree)})});TRO.observe(document.body,{childList:true,subtree:true,characterData:true})}
+
+var dwT=null,dwI=-1;
+function dwBack(){clearTimeout(dwT);dwT=null;var b=$("dw"+dwI);if(b){b.textContent="Supprimer";b.style.color=""}}
+function dw(i){var b=$("dw"+i);if(dwT&&dwI==i){dwBack();WS.splice(i,1);try{localStorage.setItem("hyroxW",JSON.stringify(WS))}catch(e){}trn();return}
+if(dwT)dwBack();dwI=i;b.textContent="Confirmer la suppression ?";b.style.color="var(--ko)";dwT=setTimeout(dwBack,3000)}
+var clhT=null;
+function clhBack(){clearTimeout(clhT);clhT=null;var b=$("clh");b.textContent="Effacer l’historique";b.style.color=""}
+function clh(){var b=$("clh");if(!clhT){b.textContent="Confirmer la suppression de tout l’historique ?";b.style.color="var(--ko)";clhT=setTimeout(clhBack,3000);return}clhBack();clearH()}
+var P=null,pav=0,pphoto="",AVS=["🏃‍♂️","🏃‍♀️","🏋️‍♂️","🏋️‍♀️"];
+AVS=AVS.concat(["🚴‍♂️", "🚴‍♀️", "🏊‍♂️", "🏊‍♀️", "🤸‍♂️", "🤸‍♀️", "🧗‍♂️", "🧗‍♀️", "🤾‍♂️", "🤾‍♀️", "🏄‍♂️", "🏄‍♀️", "🚣‍♂️", "🚣‍♀️", "🤼‍♂️", "🤼‍♀️", "⛹️‍♂️", "⛹️‍♀️", "🏌️‍♂️", "🏌️‍♀️", "🚵‍♂️", "🚵‍♀️", "🤽‍♂️", "🤽‍♀️", "🧘‍♂️", "🧘‍♀️"]);
+function loadP(){try{P=JSON.parse(localStorage.getItem("hyroxP")||"null")}catch(e){P=null}if(P&&P.av==4&&P.photo)P.av=99}
+function drawP(){setMe();$("hi").textContent=P?"Salut "+P.n+" · "+P.h+" cm · "+cv(P.w+" kg")+" · "+P.a+" ans":"Fitness racing"}
+function renderAv(){var h=AVS.map(function(a,i){return '<button class="'+(i==pav?"on":"")+'" onclick="pav='+i+';renderAv()">'+a+'</button>'}).join("");
+if(pphoto)h+='<button class="'+(pav==99?"on":"")+'" onclick="pav=99;renderAv()" style="padding:0;overflow:hidden;height:56px"><img src="'+pphoto+'" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></button>';
+$("avs").innerHTML=h;if($("wzav"))$("wzav").innerHTML=h}
+function setMe(){var b=$("me");b.textContent="";if(P&&P.av==99&&P.photo){var i=document.createElement("img");i.src=P.photo;i.alt="";i.style.cssText="width:100%;height:100%;object-fit:cover;display:block";b.appendChild(i)}else b.textContent=P?AVS[P.av]:"👤"}
+function loadPh(el){var f=el.files&&el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),s=Math.min(im.width,im.height);c.width=c.height=160;c.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,160,160);pphoto=c.toDataURL("image/jpeg",0.8);pav=99;renderAv()};im.src=r.result};r.readAsDataURL(f);el.value=""}
+function openP(first){pav=P?P.av:0;pphoto=P&&P.photo?P.photo:"";$("pn").value=P?P.n:"";$("pln").value=P&&P.ln?P.ln:"";$("ph").value=P?P.h:"";$("pw").value=P?Math.round(P.w):"";$("pa").value=P?P.a:"";$("pg").value=P?P.g:"h";
+renderAv();$("ptitle").textContent=first?"Crée ton profil":"Ton profil";$("pcx").classList.toggle("hide",first);$("perr").textContent="";$("prof").classList.remove("hide")}
+function closeP(){$("prof").classList.add("hide")}
+function saveP(){var n=$("pn").value.trim(),ln=$("pln").value.trim(),h=parseInt($("ph").value),w=parseFloat($("pw").value),a=parseInt($("pa").value);
+if(!n||!ln||!(h>100&&h<250)||!(w>30&&w<250)||!(a>10&&a<100)){$("perr").textContent="Renseigne un prénom, un nom, une taille (cm), un poids (kg) et un âge valides.";return}
+P={n:n,ln:ln,h:h,w:w,a:a,g:$("pg").value,av:pav,photo:pphoto};
+try{localStorage.setItem("hyroxP",JSON.stringify(P))}catch(e){}
+if(!run&&/^[hf][sd]$/.test($("cat").value)&&$("cat").value.charAt(0)!=P.g){$("cat").value=P.g+$("cat").value.charAt(1);refresh()}
+drawP();closeP()}
+function clearH(){H=[];try{localStorage.removeItem("hyroxH")}catch(e){}hist()}
+try{H=JSON.parse(localStorage.getItem("hyroxH")||"[]")}catch(e){H=[]}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+fillPS();initClk();trInit();refresh();loadP();drawP();applyCfg();pcUpd();relayR();rnd();if(CFG.lang=="en")trAll();if(!P)wzStart();
+</script>
+<script>if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
+</body>
+</html>
